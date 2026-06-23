@@ -8,28 +8,49 @@
     <style>
         body { font-family: sans-serif; background-color: #121416; color: #d1d5db; margin: 0; padding: 40px 20px; }
         .auth-box { max-width: 400px; margin: 80px auto; background: #1a1d20; padding: 40px; border-radius: 16px; border: 1px solid #282c30; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #2d3136; background: #15171a; color: white; }
-        .btn-green { background-color: #2e4d41; color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; cursor: pointer; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #2d3136; background: #15171a; color: white; box-sizing: border-box; }
+        .btn-green { background-color: #2e4d41; color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; cursor: pointer; font-size: 16px; }
+        .btn-green:hover { background-color: #3a6152; }
+        #authMessage { color: #ef4444; font-size: 14px; margin-top: 10px; }
     </style>
 </head>
 <body>
+
 <div id="authPanel" class="auth-box">
     <h2 id="authTitle">A6 Labs Vault</h2>
     <input type="email" id="authEmail" placeholder="Email">
     <input type="password" id="authPassword" placeholder="Passcode">
     <button class="btn-green" onclick="handleAuth()">Access Archive</button>
+    <p id="authMessage"></p>
 </div>
+
 <script>
-    const SUPABASE_URL = "https://vqfklyfiodlnffdrsnnk.supabase.co/rest/v1/"; 
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxZmtseWZpb2RsbmZmZHJzbm5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMjc0NzAsImV4cCI6MjA5NzgwMzQ3MH0.l67HL_AlrwLmBy5YHmtHqN75WAhtM6eMvv4W7Zc73W4";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SUPABASE_URL = "https://vqfklyfiodlnffdrsnnk.supabase.co";
+    const SUPABASE_ANON_KEY = "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxZmtseWZpb2RsbmZmZHJzbm5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMjc0NzAsImV4cCI6MjA5NzgwMzQ3MH0.l67HL_AlrwLmBy5YHmtHqN75WAhtM6eMvv4W7Zc73W4";
+
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function handleAuth() {
         const email = document.getElementById('authEmail').value;
         const password = document.getElementById('authPassword').value;
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if(error) alert(error.message); else location.reload();
+        const msg = document.getElementById('authMessage');
+        msg.textContent = '';
+
+        if (!email || !password) {
+            msg.textContent = 'Please fill in both fields.';
+            return;
+        }
+
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            msg.textContent = error.message;
+        } else {
+            location.reload();
+        }
     }
 </script>
+
 </body>
 </html>
