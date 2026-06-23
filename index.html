@@ -6,32 +6,215 @@
     <title>A6 Labs // Archive Portal</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; background-color: #121416; color: #d1d5db; margin: 0; padding: 40px 20px; }
-        .auth-box { max-width: 400px; margin: 80px auto; background: #1a1d20; padding: 40px; border-radius: 16px; border: 1px solid #282c30; }
-        h2 { margin-bottom: 6px; }
-        p.subtitle { color: #6b7280; font-size: 14px; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #2d3136; background: #15171a; color: white; box-sizing: border-box; }
-        .btn-green { background-color: #2e4d41; color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; cursor: pointer; font-size: 16px; margin-bottom: 12px; }
-        .btn-green:hover { background-color: #3a6152; }
-        #authMessage { font-size: 14px; margin-top: 10px; }
-        .error { color: #ef4444; }
-        .success { color: #22c55e; }
-        .toggle { text-align: center; font-size: 14px; color: #6b7280; }
-        .toggle a { color: #4ade80; cursor: pointer; text-decoration: underline; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121416; 
+            color: #d1d5db; 
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #1a1d20; 
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid #282c30; 
+        }
+        .auth-box {
+            max-width: 400px;
+            margin: 80px auto;
+            background: #1a1d20;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #282c30;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #15171a;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid #23272b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        h1 { font-size: 28px; font-weight: 700; color: #e5e7eb; letter-spacing: -0.5px; margin: 0 0 8px 0; }
+        .subtitle { color: #8a929b; font-size: 15px; margin-bottom: 35px; }
+        h2 { font-size: 20px; font-weight: 600; color: #cbd5e1; margin-top: 0; margin-bottom: 20px; }
+        h3 { font-size: 16px; font-weight: 600; color: #a1a1aa; margin-top: 0; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #94a3b8; font-size: 13px; letter-spacing: 0.3px; }
+        input[type="email"], input[type="password"], input[type="number"], input[type="text"], input[type="time"], select { 
+            width: 100%; padding: 12px 16px; border: 1px solid #2d3136; border-radius: 8px; 
+            box-sizing: border-box; background-color: #15171a; color: #e2e8f0; font-size: 15px;
+        }
+        input:focus, select:focus { outline: none; border-color: #4b5563; background-color: #1a1d20; }
+        .inline-label { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 15px; cursor: pointer; color: #94a3b8; font-size: 14px; }
+        .inline-label input { width: auto; margin: 0; }
+        .btn-green { background-color: #2e4d41; color: #e2e8f0; border: none; padding: 14px 20px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; width: 100%; margin-bottom: 10px; }
+        .btn-green:hover { background-color: #243d34; }
+        .btn-orange { background-color: #8c4c2e; color: #f3f4f6; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; margin-right: 12px; }
+        .btn-orange:hover { background-color: #733e25; }
+        .btn-blue { background-color: #344d5e; color: #f3f4f6; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; margin-right: 12px; }
+        .btn-blue:hover { background-color: #293d4a; }
+        .btn-add { background-color: #374151; color: #f3f4f6; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; }
+        .btn-add:hover { background-color: #4b5563; }
+        .btn-text { background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 14px; text-decoration: underline; padding: 0; }
+        .results { margin-top: 35px; padding: 25px; background-color: #16181b; border-radius: 12px; border: 1px solid #23272b; border-left: 4px solid #2e4d41; }
+        .goals-box { margin-top: 20px; padding: 20px; background-color: #1a1d20; border-radius: 10px; display: none; border: 1px solid #282c30; }
+        .locked-overlay { background: #15171a; padding: 20px; border-radius: 8px; text-align: center; border: 1px dashed #4b5563; color: #94a3b8; font-size: 14px; font-style: italic; margin-top: 15px; }
+        .macro-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 15px; }
+        .macro-card { padding: 16px 5px; border-radius: 8px; text-align: center; font-weight: 700; color: #e2e8f0; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .prot-bg { background-color: #613030; } 
+        .carb-bg { background-color: #73562b; } 
+        .fats-bg { background-color: #2b473c; } 
+        .fiber-bg { background-color: #4c3a4a; } 
+        .premium-section { margin-top: 45px; padding-top: 35px; border-top: 1px solid #282c30; }
+        .day-selector-box { background-color: #15171a; padding: 18px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #23272b; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1a1d20; border-radius: 8px; overflow: hidden; border: 1px solid #23272b; }
+        th, td { padding: 16px; text-align: left; vertical-align: top; border-bottom: 1px solid #23272b; }
+        th { background-color: #15171a; color: #94a3b8; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .todo-item { display: flex; align-items: center; gap: 12px; font-size: 15px; color: #cbd5e1; }
+        .todo-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #2e4d41; }
+        .todo-item.disabled { opacity: 0.5; cursor: not-allowed; }
+        .no-tasks { color: #64748b; font-style: italic; font-size: 14px; padding: 10px 0; }
+        #authMessage { font-size: 14px; margin-top: 10px; color: #ef4444; }
+        #authMessage.success { color: #22c55e; }
     </style>
 </head>
 <body>
 
 <div id="authPanel" class="auth-box">
-    <h2 id="authTitle">A6 Labs Vault</h2>
-    <p class="subtitle" id="authSubtitle">Sign in to unlock your archive.</p>
-    <input type="email" id="authEmail" placeholder="Email Address">
-    <input type="password" id="authPassword" placeholder="Vault Passcode">
-    <button class="btn-green" onclick="handleAuth()">Access Archive</button>
-    <p class="toggle" id="toggleText">
-        Don't have an account? <a onclick="toggleMode()">Register Now</a>
-    </p>
+    <h2 id="authTitle" style="margin-bottom:8px;">A6 Labs Vault</h2>
+    <p id="authSubtitle" style="color:#8a929b; font-size:14px; margin:0 0 25px 0;">Sign in to unlock your data grid framework.</p>
+    <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="authEmail" placeholder="name@domain.com">
+    </div>
+    <div class="form-group">
+        <label>Vault Passcode</label>
+        <input type="password" id="authPassword" placeholder="••••••••">
+    </div>
+    <button class="btn-green" id="mainAuthBtn" onclick="handleAuth()">Access Archive</button>
     <p id="authMessage"></p>
+    <p style="text-align:center; font-size:14px; color:#8a929b; margin-top:20px;">
+        <span id="toggleAuthText">Don't have an archive profile?</span> 
+        <button class="btn-text" id="toggleAuthBtn" onclick="toggleAuthMode()">Register Now</button>
+    </p>
+</div>
+
+<div class="container" id="appWorkspace" style="display: none;">
+    <div class="status-bar">
+        <div>
+            <span style="color:#8a929b;">Identity:</span> <strong id="userIdentityText" style="color:#e5e7eb;">-</strong>
+            <span style="margin: 0 10px; color:#4b5563;">|</span>
+            <span style="color:#8a929b;">Tier:</span> <strong id="userTierText" style="color:#60a5fa;">Loading...</strong>
+        </div>
+        <button class="btn-add" onclick="logout()" style="padding: 6px 14px; font-size:13px; background:#613030;">Lock Vault</button>
+    </div>
+    <h1>A6 Labs</h1>
+    <div class="subtitle">Personal study & optimization archive.</div>
+    <div class="form-group">
+        <label for="weight">Weight (kg)</label>
+        <input type="number" id="weight" value="80">
+    </div>
+    <div class="form-group">
+        <label for="height">Height (cm)</label>
+        <input type="number" id="height" value="180">
+    </div>
+    <div class="form-group">
+        <label for="age">Age (years)</label>
+        <input type="number" id="age" value="25">
+    </div>
+    <button class="btn-green" onclick="calculateBaselines()">Calculate Physical Baselines</button>
+    <div class="results">
+        <h2>Calculated Framework:</h2>
+        <p><strong>Body Mass Index (BMI):</strong> <span id="bmiResult" style="font-weight: 700; color: #4ade80;">-</span></p>
+        <p><strong>Total Daily Energy Expenditure (TDEE):</strong> <span id="tdeeResult" style="font-weight: 700; color: #60a5fa;">-</span> kcal/day</p>
+        <div id="premiumActions" style="margin-top: 20px; display: none;">
+            <button class="btn-orange" onclick="adjustGoals('cut')">Show Deficit Plan (Cut)</button>
+            <button class="btn-blue" onclick="adjustGoals('bulk')">Show Surplus Plan (Bulk)</button>
+        </div>
+        <div id="normalStrategyLock" class="locked-overlay">
+            ★ Advanced Strategy Matrix and Macro calculations require a Premium Account.
+        </div>
+        <div class="goals-box" id="goalsBox">
+            <h3 id="goalTitle" style="color: #e5e7eb; margin-bottom: 12px;">Strategy Plan</h3>
+            <p style="margin-bottom: 15px; font-size: 15px;"><strong>Target Daily Energy Intakes:</strong> <span id="targetCalories" style="font-weight:700;">-</span> kcal/day</p>
+            <div class="macro-grid">
+                <div class="macro-card prot-bg">Protein<br><span id="pGoal" style="font-size:16px; display:block; margin-top:4px;">-</span></div>
+                <div class="macro-card carb-bg">Carbs<br><span id="cGoal" style="font-size:16px; display:block; margin-top:4px;">-</span></div>
+                <div class="macro-card fats-bg">Fats<br><span id="fGoal" style="font-size:16px; display:block; margin-top:4px;">-</span></div>
+                <div class="macro-card fiber-bg">Fiber<br><span id="fiberGoal" style="font-size:16px; display:block; margin-top:4px;">-</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="premium-section">
+        <h2>Daily Timeline Grid</h2>
+        <div class="day-selector-box">
+            <label for="viewDaySelector" style="color: #60a5fa;">Select Active Day Tracker:</label>
+            <select id="viewDaySelector" onchange="switchDayView()">
+                <option value="monday">Monday</option>
+                <option value="tuesday">Tuesday</option>
+                <option value="wednesday">Wednesday</option>
+                <option value="thursday">Thursday</option>
+                <option value="friday">Friday</option>
+                <option value="saturday">Saturday</option>
+                <option value="sunday">Sunday</option>
+            </select>
+        </div>
+        <h3 style="margin-bottom: 10px;">Schedule View: <span id="currentDayTitle" style="color: #4ade80; text-transform: uppercase; letter-spacing: 0.5px;">monday</span></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 35%;">Time Allocation</th>
+                    <th style="width: 65%;">Routine Assignments & Tasks</th>
+                </tr>
+            </thead>
+            <tbody id="dynamic-table-body"></tbody>
+        </table>
+        <div id="premiumTaskCreator" style="margin-top: 30px; background: #15171a; padding: 25px; border-radius: 12px; border: 1px solid #23272b; display: none;">
+            <h3 style="color: #cbd5e1; margin-bottom: 15px;">Add Custom Task</h3>
+            <div class="form-group">
+                <label for="newItemText">Task Objective:</label>
+                <input type="text" id="newItemText" placeholder="e.g., Take Morning Pill / Premium Breakfast">
+            </div>
+            <label class="inline-label">
+                <input type="checkbox" id="isExactTime" onchange="toggleEndTimeVisibility()"> 
+                This task is an exact single time event (e.g., Take a pill at 8:00 AM)
+            </label>
+            <div style="display: flex; gap: 15px; margin-bottom: 5px;">
+                <div style="flex: 1;">
+                    <label id="startLabel" for="startTime">Start / Event Time:</label>
+                    <input type="time" id="startTime" value="08:00">
+                </div>
+                <div style="flex: 1;" id="endTimeContainer">
+                    <label for="endTime">End Time:</label>
+                    <input type="time" id="endTime" value="09:00">
+                </div>
+                <div style="flex: 1;">
+                    <label for="targetDay">Target Day Horizon:</label>
+                    <select id="targetDay">
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednesday">Wednesday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                        <option value="saturday">Saturday</option>
+                        <option value="sunday">Sunday</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-add" onclick="addItemToMaster()">+ Save to Timeline</button>
+        </div>
+        <div id="normalTimelineLock" class="locked-overlay" style="margin-top: 30px;">
+            ★ Custom schedule editing tools are locked. Upgrade to Premium to completely personalize your timeline nodes.
+        </div>
+    </div>
 </div>
 
 <script>
@@ -41,18 +224,41 @@
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let isLoginMode = true;
+    var currentTier = "normal";
+    var globalTdee = 0;
+    var currentWeight = 80;
+    var authMode = "signin";
 
-    function toggleMode() {
-        isLoginMode = !isLoginMode;
-        document.getElementById('authTitle').textContent = isLoginMode ? 'A6 Labs Vault' : 'Create Account';
-        document.getElementById('authSubtitle').textContent = isLoginMode ? 'Sign in to unlock your archive.' : 'Register to access the archive.';
+    var scheduleDatabase = {
+        monday: [
+            { start: "08:00", end: null, isExact: true, text: "Take Omega-3 Pill" },
+            { start: "13:00", end: "14:00", isExact: false, text: "Protein Targeted Lunch Window" }
+        ],
+        tuesday: [{ start: "08:00", end: null, isExact: true, text: "Take Morning Vitamins" }],
+        wednesday: [], thursday: [], friday: [], saturday: [],
+        sunday: [
+            { start: "02:00", end: "03:30", isExact: false, text: "Late Night Nutrition Logging" },
+            { start: "08:00", end: null, isExact: true, text: "Take Medication Pill" }
+        ]
+    };
+
+    function toggleAuthMode() {
+        if(authMode === "signin") {
+            authMode = "signup";
+            document.getElementById('authTitle').innerText = "Create Vault Profile";
+            document.getElementById('authSubtitle').innerText = "Register your custom encrypted station address.";
+            document.getElementById('mainAuthBtn').innerText = "Register Profile";
+            document.getElementById('toggleAuthText').innerText = "Already have an account?";
+            document.getElementById('toggleAuthBtn').innerText = "Sign In";
+        } else {
+            authMode = "signin";
+            document.getElementById('authTitle').innerText = "A6 Labs Vault";
+            document.getElementById('authSubtitle').innerText = "Sign in to unlock your data grid framework.";
+            document.getElementById('mainAuthBtn').innerText = "Access Archive";
+            document.getElementById('toggleAuthText').innerText = "Don't have an archive profile?";
+            document.getElementById('toggleAuthBtn').innerText = "Register Now";
+        }
         document.getElementById('authMessage').textContent = '';
-        const btn = document.querySelector('.btn-green');
-        btn.textContent = isLoginMode ? 'Access Archive' : 'Register';
-        document.getElementById('toggleText').innerHTML = isLoginMode
-            ? 'Don\'t have an account? <a onclick="toggleMode()">Register Now</a>'
-            : 'Already have an account? <a onclick="toggleMode()">Sign In</a>';
     }
 
     async function handleAuth() {
@@ -62,32 +268,152 @@
         msg.textContent = '';
         msg.className = '';
 
-        if (!email || !password) {
-            msg.textContent = 'Please fill in both fields.';
-            msg.className = 'error';
-            return;
-        }
+        if(!email || !password) { msg.textContent = "Please complete authentication credentials."; return; }
 
-        if (isLoginMode) {
-            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) {
-                msg.textContent = error.message;
-                msg.className = 'error';
-            } else {
-                location.reload();
-            }
+        if(authMode === "signup") {
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) { msg.textContent = "Registration Error: " + error.message; return; }
+            msg.textContent = "Registration successful! You can now sign in.";
+            msg.className = 'success';
+            setTimeout(() => toggleAuthMode(), 1500);
         } else {
-            const { error } = await supabaseClient.auth.signUp({ email, password });
-            if (error) {
-                msg.textContent = error.message;
-                msg.className = 'error';
-            } else {
-                msg.textContent = 'Account created! Check your email to confirm.';
-                msg.className = 'success';
-            }
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) { msg.textContent = "Access Denied: " + error.message; return; }
+            checkSession();
         }
     }
-</script>
 
+    async function checkSession() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if(session) {
+            document.getElementById('authPanel').style.display = 'none';
+            document.getElementById('appWorkspace').style.display = 'block';
+            document.getElementById('userIdentityText').innerText = session.user.email;
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('tier')
+                .eq('id', session.user.id)
+                .single();
+            applyTierView(profile ? profile.tier : 'normal');
+        } else {
+            document.getElementById('authPanel').style.display = 'block';
+            document.getElementById('appWorkspace').style.display = 'none';
+        }
+    }
+
+    function applyTierView(tier) {
+        currentTier = tier;
+        const tierTextEl = document.getElementById('userTierText');
+        if(tier === 'premium') {
+            tierTextEl.innerText = "Premium Verified ★";
+            tierTextEl.style.color = "#4ade80";
+            document.getElementById('premiumActions').style.display = "block";
+            document.getElementById('premiumTaskCreator').style.display = "block";
+            document.getElementById('normalStrategyLock').style.display = "none";
+            document.getElementById('normalTimelineLock').style.display = "none";
+        } else {
+            tierTextEl.innerText = "Standard Archive";
+            tierTextEl.style.color = "#60a5fa";
+            document.getElementById('premiumActions').style.display = "none";
+            document.getElementById('premiumTaskCreator').style.display = "none";
+            document.getElementById('goalsBox').style.display = "none";
+            document.getElementById('normalStrategyLock').style.display = "block";
+            document.getElementById('normalTimelineLock').style.display = "block";
+        }
+        switchDayView();
+    }
+
+    async function logout() {
+        await supabaseClient.auth.signOut();
+        location.reload();
+    }
+
+    function calculateBaselines() {
+        currentWeight = parseFloat(document.getElementById('weight').value);
+        var height = parseFloat(document.getElementById('height').value);
+        var age = parseFloat(document.getElementById('age').value);
+        if (!currentWeight || !height || !age) { alert("Fields required."); return; }
+        var heightInMeters = height / 100;
+        var bmi = currentWeight / (heightInMeters * heightInMeters);
+        var bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) + 5;
+        globalTdee = bmr * 1.375;
+        document.getElementById('bmiResult').innerText = bmi.toFixed(1);
+        document.getElementById('tdeeResult').innerText = Math.round(globalTdee).toLocaleString();
+        document.getElementById('goalsBox').style.display = "none";
+    }
+
+    function adjustGoals(mode) {
+        if (currentTier !== 'premium') return;
+        if (globalTdee === 0) { alert("Calculate stats first."); return; }
+        var targetCal = mode === 'cut' ? globalTdee - 500 : globalTdee + 300;
+        var titleText = mode === 'cut' ? "Fat Loss Plan (Cutting Mode)" : "Muscle Building Plan (Bulking Mode)";
+        var proteinGrams = currentWeight * 2;
+        var fatGrams = (targetCal * 0.25) / 9;
+        var carbGrams = (targetCal - ((proteinGrams * 4) + (fatGrams * 9))) / 4;
+        var fiberGrams = (targetCal / 1000) * 14;
+        document.getElementById('goalTitle').innerText = titleText;
+        document.getElementById('targetCalories').innerText = Math.round(targetCal).toLocaleString();
+        document.getElementById('pGoal').innerText = Math.round(proteinGrams);
+        document.getElementById('cGoal').innerText = Math.round(carbGrams);
+        document.getElementById('fGoal').innerText = Math.round(fatGrams);
+        document.getElementById('fiberGoal').innerText = Math.round(fiberGrams);
+        document.getElementById('goalsBox').style.display = "block";
+    }
+
+    function toggleEndTimeVisibility() {
+        var isExact = document.getElementById('isExactTime').checked;
+        document.getElementById('endTimeContainer').style.visibility = isExact ? 'hidden' : 'visible';
+        document.getElementById('startLabel').innerText = isExact ? "Exact Event Time:" : "Start / Event Time:";
+    }
+
+    function formatToAmPm(timeString) {
+        if (!timeString) return "";
+        var parts = timeString.split(':');
+        var hours = parseInt(parts[0]);
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        return (hours < 10 ? '0' + hours : hours) + ':' + parts[1] + ' ' + ampm;
+    }
+
+    function switchDayView() {
+        var selectedDay = document.getElementById('viewDaySelector').value;
+        document.getElementById('currentDayTitle').innerText = selectedDay;
+        var dayTasks = scheduleDatabase[selectedDay].sort((a,b) => a.start.localeCompare(b.start));
+        var tableBody = document.getElementById('dynamic-table-body');
+        var htmlContent = "";
+        if (dayTasks.length === 0) {
+            htmlContent = '<tr><td colspan="2" class="no-tasks">Timeline is open. No active items logged.</td></tr>';
+        } else {
+            for (var i = 0; i < dayTasks.length; i++) {
+                var task = dayTasks[i];
+                var displayTime = task.isExact ? formatToAmPm(task.start) : formatToAmPm(task.start) + ' - ' + formatToAmPm(task.end);
+                var isDisabled = currentTier !== 'premium' ? 'disabled' : '';
+                var isCheckable = currentTier !== 'premium' ? 'disabled onclick="return false;"' : '';
+                htmlContent += '<tr>' +
+                    '<td><strong style="color: #60a5fa;">' + displayTime + '</strong></td>' +
+                    '<td><div class="todo-item ' + isDisabled + '"><input type="checkbox" ' + isCheckable + '> ' + task.text + '</div></td>' +
+                '</tr>';
+            }
+        }
+        tableBody.innerHTML = htmlContent;
+    }
+
+    function addItemToMaster() {
+        if (currentTier !== 'premium') return;
+        var text = document.getElementById('newItemText').value;
+        var start = document.getElementById('startTime').value;
+        var end = document.getElementById('endTime').value;
+        var isExact = document.getElementById('isExactTime').checked;
+        var day = document.getElementById('targetDay').value;
+        if (text.trim() === "" || !start || (!isExact && !end)) { alert("Complete parameters."); return; }
+        scheduleDatabase[day].push({ start, end: isExact ? null : end, isExact, text });
+        switchDayView();
+        document.getElementById('newItemText').value = "";
+    }
+
+    window.onload = function() {
+        checkSession();
+    };
+</script>
 </body>
 </html>
