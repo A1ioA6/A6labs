@@ -7,105 +7,29 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: sans-serif; background-color: #121416; color: #d1d5db; margin: 0; padding: 40px 20px; }
-        .container { max-width: 850px; margin: 0 auto; background: #1a1d20; padding: 40px; border-radius: 16px; border: 1px solid #282c30; }
         .auth-box { max-width: 400px; margin: 80px auto; background: #1a1d20; padding: 40px; border-radius: 16px; border: 1px solid #282c30; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 13px; margin-bottom: 8px; color: #94a3b8; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #2d3136; border-radius: 8px; background-color: #15171a; color: #e2e8f0; }
-        .btn-green { background-color: #2e4d41; color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; width: 100%; }
-        .btn-text { background: none; border: none; color: #60a5fa; cursor: pointer; text-decoration: underline; }
-        .macro-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-        .macro-card { padding: 15px; border-radius: 8px; text-align: center; background: #23272b; font-size: 12px; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #2d3136; background: #15171a; color: white; }
+        .btn-green { background-color: #2e4d41; color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
-
-<!-- Login / Register -->
 <div id="authPanel" class="auth-box">
     <h2 id="authTitle">A6 Labs Vault</h2>
-    <div class="form-group"><label>Email</label><input type="email" id="authEmail"></div>
-    <div class="form-group"><label>Passcode</label><input type="password" id="authPassword"></div>
-    <button class="btn-green" id="mainAuthBtn" onclick="handleAuth()">Access Archive</button>
-    <p style="text-align:center; margin-top:20px;">
-        <span id="toggleAuthText">Don't have an account?</span> 
-        <button class="btn-text" id="toggleAuthBtn" onclick="toggleAuthMode()">Register Now</button>
-    </p>
+    <input type="email" id="authEmail" placeholder="Email">
+    <input type="password" id="authPassword" placeholder="Passcode">
+    <button class="btn-green" onclick="handleAuth()">Access Archive</button>
 </div>
-
-<!-- Main App -->
-<div class="container" id="appWorkspace" style="display: none;">
-    <h1>A6 Labs</h1>
-    <p>Identity: <span id="userEmail"></span> | Tier: <span id="userTier">Loading...</span> 
-    <button class="btn-text" onclick="logout()">Logout</button></p>
-    
-    <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" value="80"></div>
-    <button class="btn-green" onclick="calculate()">Calculate</button>
-    
-    <div id="premiumContent" style="display:none; margin-top:20px;">
-        <h3>Calculated Macros:</h3>
-        <div class="macro-grid">
-            <div class="macro-card">Protein<br><b id="pGoal">-</b></div>
-            <div class="macro-card">Carbs<br><b id="cGoal">-</b></div>
-            <div class="macro-card">Fats<br><b id="fGoal">-</b></div>
-            <div class="macro-card">Fiber<br><b id="fiberGoal">-</b></div>
-        </div>
-    </div>
-</div>
-
 <script>
-    // ==========================================
-    // PASTE KEYS HERE
-    // ==========================================
     const SUPABASE_URL = "https://vqfklyfiodlnffdrsnnk.supabase.co/rest/v1/"; 
     const SUPABASE_ANON_KEY = "sb_publishable_2qdPxaZA3GUozbYCbThMSg_KXOi7WxS";
-    
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    var authMode = "signin";
-
-    function toggleAuthMode() {
-        authMode = (authMode === "signin") ? "signup" : "signin";
-        document.getElementById('authTitle').innerText = (authMode === "signin") ? "A6 Labs Vault" : "Create Profile";
-        document.getElementById('mainAuthBtn').innerText = (authMode === "signin") ? "Access Archive" : "Register Profile";
-        document.getElementById('toggleAuthText').innerText = (authMode === "signin") ? "Don't have an account?" : "Already have an account?";
-        document.getElementById('toggleAuthBtn').innerText = (authMode === "signin") ? "Register Now" : "Sign In";
-    }
 
     async function handleAuth() {
         const email = document.getElementById('authEmail').value;
         const password = document.getElementById('authPassword').value;
-        if(authMode === "signup") {
-            const { error } = await supabase.auth.signUp({ email, password });
-            if(error) alert(error.message); else alert("Check your email!");
-        } else {
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if(error) alert(error.message); else location.reload();
-        }
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if(error) alert(error.message); else location.reload();
     }
-
-    async function checkUser() {
-        const { data: { session } } = await supabase.auth.getSession();
-        if(session) {
-            document.getElementById('authPanel').style.display = 'none';
-            document.getElementById('appWorkspace').style.display = 'block';
-            document.getElementById('userEmail').innerText = session.user.email;
-            
-            const { data: profile } = await supabase.from('profiles').select('tier').eq('id', session.user.id).single();
-            const tier = profile ? profile.tier : 'normal';
-            document.getElementById('userTier').innerText = tier;
-            if(tier === 'premium') document.getElementById('premiumContent').style.display = 'block';
-        }
-    }
-
-    function calculate() {
-        const w = document.getElementById('weight').value;
-        document.getElementById('pGoal').innerText = (w * 2) + "g";
-        document.getElementById('cGoal').innerText = (w * 3) + "g";
-        document.getElementById('fGoal').innerText = (w * 1) + "g";
-        document.getElementById('fiberGoal').innerText = "30g";
-    }
-
-    function logout() { supabase.auth.signOut(); location.reload(); }
-    window.onload = checkUser;
 </script>
 </body>
 </html>
