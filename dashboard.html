@@ -340,11 +340,14 @@
     async function loadAllData() {
         const today = new Date().toISOString().split('T')[0];
         try {
-            const { data: w } = await sb.from('water_logs').select('glasses').eq('user_id', currentUser.id).eq('date', today).single();
+            const { data: w, error } = await sb.from('water_logs').select('glasses').eq('user_id', currentUser.id).eq('date', today).single();
+            if (error && error.code !== 'PGRST116') throw error; // Ignore "no rows found" error
             if (w) { waterAmount = w.glasses * 250; updateWaterUI(); }
-        } catch(e) {}
+        } catch(e) { console.error("Water load error:", e); }
+        
         try {
-            const { data: s } = await sb.from('user_stats').select('*').eq('id', currentUser.id).single();
+            const { data: s, error } = await sb.from('user_stats').select('*').eq('id', currentUser.id).single();
+            if (error && error.code !== 'PGRST116') throw error;
             if (s) {
                 document.getElementById('dash-weight').textContent = (s.weight || '--') + ' kg';
                 document.getElementById('dash-bmi').textContent = s.bmi || '--';
@@ -353,18 +356,22 @@
                 if (s.height) document.getElementById('height-input').value = s.height;
                 if (s.age) document.getElementById('age-input').value = s.age;
             }
-        } catch(e) {}
+        } catch(e) { console.error("Stats load error:", e); }
+        
         try {
-            const { data: wl } = await sb.from('weight_logs').select('weight, date').eq('user_id', currentUser.id).order('date', { ascending: true });
+            const { data: wl, error } = await sb.from('weight_logs').select('weight, date').eq('user_id', currentUser.id).order('date', { ascending: true });
+            if (error) throw error;
             if (wl && wl.length > 0) {
                 weightChart.data.labels = wl.map(l => new Date(l.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
                 weightChart.data.datasets[0].data = wl.map(l => parseFloat(l.weight));
                 weightChart.update();
                 document.getElementById('dash-weight').textContent = wl[wl.length-1].weight + ' kg';
             }
-        } catch(e) {}
+        } catch(e) { console.error("Weight chart load error:", e); }
+        
         try {
-            const { data: td } = await sb.from('workout_logs').select('*').eq('user_id', currentUser.id);
+            const { data: td, error } = await sb.from('workout_logs').select('*').eq('user_id', currentUser.id);
+            if (error) throw error;
             if (td) {
                 tasks = {};
                 td.forEach(t => {
@@ -373,13 +380,15 @@
                     tasks[day].push({ id: t.id, text: t.exercise, time: t.task_time || '00:00' });
                 });
             }
-        } catch(e) {}
+        } catch(e) { console.error("Tasks load error:", e); }
     }
 
     async function updateStreak() {
         const today = new Date().toISOString().split('T')[0];
         try {
-            const { data: sd } = await sb.from('streaks').select('*').eq('id', currentUser.id).single();
+            const { data: sd, error } = await sb.from('streaks').select('*').eq('id', currentUser.id).single();
+            if (error && error.code !== 'PGRST116') throw error;
+            
             let streak = 1;
             if (sd) {
                 const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
@@ -392,7 +401,7 @@
                 await sb.from('streaks').insert({ id: currentUser.id, current_streak: 1, last_login: today });
             }
             document.getElementById('streak-display').textContent = '🔥 ' + streak + ' Day Streak';
-        } catch(e) {}
+        } catch(e) { console.error("Streak error:", e); }
     }
 
     function updateWaterUI() {
@@ -409,7 +418,10 @@
         updateWaterUI();
         const today = new Date().toISOString().split('T')[0];
         const glasses = Math.round(waterAmount / 250);
-        try { await sb.from('water_logs').upsert({ user_id: currentUser.id, date: today, glasses }, { onConflict: 'user_id,date' }); } catch(e) {}
+        try { 
+            const { error } = await sb.from('water_logs').upsert({ user_id: currentUser.id, date: today, glasses }, { onConflict: 'user_id,date' }); 
+            if(error) throw error;
+        } catch(e) { console.error("Water update error:", e); }
     }
 
     function getMacros(calories, weight) {
@@ -464,7 +476,11 @@
         document.getElementById('dash-tdee').textContent = tdee + ' kcal';
         document.getElementById('dash-weight').textContent = weight + ' kg';
 
-        try { sb.from('user_stats').upsert({ id: currentUser.id, weight, height: heightCm, age, bmi: parseFloat(bmi), tdee }, { onConflict: 'id' }); } catch(e) {}
+        try { 
+            sb.from('user_stats').upsert({ id: currentUser.id, weight, height: heightCm, age, bmi: parseFloat(bmi), tdee }, { onConflict: 'id' }).then(({error}) => {
+                if(error) console.error("Stats save error:", error);
+            }); 
+        } catch(e) { console.error("Stats save error:", e); }
     }
 
     function initChart() {
@@ -481,16 +497,24 @@
         if (!val) { alert('Enter a weight value.'); return; }
         const today = new Date().toISOString().split('T')[0];
         try {
-            await sb.from('weight_logs').insert({ user_id: currentUser.id, date: today, weight: val });
+            const { error: insertError } = await sb.from('weight_logs').insert({ user_id: currentUser.id, date: today, weight: val });
+            if (insertError) throw insertError;
+            
             document.getElementById('log-weight-val').value = '';
-            const { data: wl } = await sb.from('weight_logs').select('weight, date').eq('user_id', currentUser.id).order('date', { ascending: true });
+            
+            const { data: wl, error: selectError } = await sb.from('weight_logs').select('weight, date').eq('user_id', currentUser.id).order('date', { ascending: true });
+            if (selectError) throw selectError;
+            
             if (wl) {
                 weightChart.data.labels = wl.map(l => new Date(l.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
                 weightChart.data.datasets[0].data = wl.map(l => parseFloat(l.weight));
                 weightChart.update();
                 document.getElementById('dash-weight').textContent = val + ' kg';
             }
-        } catch(e) { alert('Error: ' + e.message); }
+        } catch(e) { 
+            console.error(e);
+            alert('Error saving weight: ' + e.message); 
+        }
     }
 
     async function addTask() {
@@ -506,20 +530,27 @@
                 task_time: time,
                 date: new Date().toISOString().split('T')[0]
             }).select().single();
+            
             if (error) throw error;
+            
             if (!tasks[day]) tasks[day] = [];
             tasks[day].push({ id: data.id, text, time });
             document.getElementById('task-input').value = '';
             viewDay(day, document.querySelectorAll('.day-tab')[['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].indexOf(day)]);
-        } catch(e) { alert('Error saving task: ' + e.message); }
+        } catch(e) { 
+            console.error(e);
+            alert('Error saving task: ' + e.message); 
+        }
     }
 
     async function deleteTask(id, day) {
         try {
-            await sb.from('workout_logs').delete().eq('id', id);
+            const { error } = await sb.from('workout_logs').delete().eq('id', id);
+            if(error) throw error;
+            
             tasks[day] = tasks[day].filter(t => t.id !== id);
             viewDay(day, document.querySelector('.day-tab.active'));
-        } catch(e) {}
+        } catch(e) { console.error("Error deleting task:", e); }
     }
 
     function viewDay(day, btn) {
