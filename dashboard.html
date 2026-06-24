@@ -224,15 +224,15 @@
                     <h3>BMI / TDEE Calculator</h3>
                     <div class="input-group">
                         <label>Weight (kg)</label>
-                        <input type="number" id="weight-input" placeholder="e.g. 95">
+                        <input type="number" id="weight-input" placeholder="e.g. 90">
                     </div>
                     <div class="input-group">
                         <label>Height (cm)</label>
-                        <input type="number" id="height-input" placeholder="e.g. 185">
+                        <input type="number" id="height-input" placeholder="e.g. 180">
                     </div>
                     <div class="input-group">
                         <label>Age</label>
-                        <input type="number" id="age-input" placeholder="e.g. 19">
+                        <input type="number" id="age-input" placeholder="e.g. 25">
                     </div>
                     <button class="btn-action" onclick="calculateMetrics()">Calculate & Sync Data</button>
                     
@@ -298,15 +298,12 @@
     <script>
         // Global State Tree Context
         let appState = {
-            streak: 3, // Mock base value
+            streak: 0, 
             water: 0,
-            weightLogs: [98.5, 98.0, 97.45],
-            weightDates: ['June 10', 'June 17', 'June 24'],
+            weightLogs: [],
+            weightDates: [],
             bmi: 0,
-            tasks: [
-                { id: 1, text: "High Intensity Workout Set to Failure", completed: false },
-                { id: 2, text: "Review Endocrine System Lecture Pathways", completed: true }
-            ]
+            tasks: [] // Prebuilt tasks cleared out completely
         };
 
         let supabaseClient = null;
@@ -336,6 +333,8 @@
             if(appState.weightLogs.length > 0) {
                 let latestWeight = appState.weightLogs[appState.weightLogs.length - 1];
                 document.getElementById('stat-weight').innerText = `${latestWeight} kg`;
+            } else {
+                document.getElementById('stat-weight').innerText = `-- kg`;
             }
             renderTasks();
         }
@@ -421,6 +420,12 @@
         function renderTasks() {
             const container = document.getElementById('task-list-container');
             container.innerHTML = '';
+            
+            if (appState.tasks.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); font-style: italic;">No tasks added for today yet.</p>`;
+                return;
+            }
+
             appState.tasks.forEach(task => {
                 const div = document.createElement('div');
                 div.className = `task-item ${task.completed ? 'completed' : ''}`;
@@ -445,7 +450,6 @@
         function toggleTask(id) {
             appState.tasks = appState.tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
             renderTasks();
-            // Find updated structural target item to transmit down integration wire
             const updated = appState.tasks.find(t => t.id === id);
             syncWithSupabase('todo_tasks', updated);
         }
@@ -471,7 +475,6 @@
                 return;
             }
             
-            // Async non-blocking stream ingestion call
             supabaseClient.from(tableName).insert([payload])
                 .then(({ data, error }) => {
                     if (error) console.error("Database upsert transmission breakdown: ", error.message);
