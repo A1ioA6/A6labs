@@ -5,30 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A6Labs Dashboard</title>
     <style>
-        body { font-family: sans-serif; margin: 0; display: flex; background: #f4f4f9; color: #333; }
-        .sidebar { width: 250px; height: 100vh; background: #2c3e50; color: white; padding: 20px; box-sizing: border-box; }
-        .main-content { flex: 1; padding: 40px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; background: #f4f4f9; color: #333; }
+        
+        /* Sidebar styling */
+        .sidebar { width: 250px; height: 100vh; background: #2c3e50; color: white; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+        .sidebar h2 { margin-top: 0; border-bottom: 2px solid #34495e; padding-bottom: 10px; }
+        
+        /* Interactive Menu Buttons */
+        .menu-btn { background: none; border: none; color: #b8c2cc; padding: 12px 15px; text-align: left; font-size: 1rem; cursor: pointer; border-radius: 4px; margin-bottom: 5px; width: 100%; transition: all 0.2s; }
+        .menu-btn:hover { background: #34495e; color: white; }
+        .menu-btn.active { background: #3498db; color: white; font-weight: bold; }
+        
+        .logout-btn { background: #e74c3c; border: none; color: white; padding: 10px; border-radius: 4px; cursor: pointer; margin-top: auto; font-weight: bold; }
+        .logout-btn:hover { background: #c0392b; }
+        
+        /* Main area layout */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-top: 20px; }
+        
+        /* Tab Visibility Logic */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h2>A6Labs</h2>
-        <p>📊 Overview</p>
-        <p>⚙️ Settings</p>
-        <button onclick="window.location.href='index.html'">Logout</button>
+        <button class="menu-btn active" onclick="switchTab('overview', this)">📊 Overview</button>
+        <button class="menu-btn" onclick="switchTab('settings', this)">⚙️ Settings</button>
+        <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
     </div>
 
     <div class="main-content">
-        <header>
+        
+        <div id="overview" class="tab-content active">
             <h1>Welcome to your Dashboard!</h1>
-        </header>
-        <div class="card">
-            <h3>System Status</h3>
-            <p>You have successfully connected your login page to the dashboard portal.</p>
+            <div class="card">
+                <h3>System Status</h3>
+                <p>You have successfully connected your login page to the dashboard portal.</p>
+            </div>
         </div>
+
+        <div id="settings" class="tab-content">
+            <h1>Account Settings</h1>
+            <div class="card">
+                <h3>Profile Configurations</h3>
+                <p>Customize your A6Labs portal preferences, security options, and API keys here.</p>
+            </div>
+        </div>
+
     </div>
+
+    <script>
+        function switchTab(tabId, clickedButton) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active style from all menu buttons
+            const buttons = document.querySelectorAll('.menu-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show the selected tab and light up the clicked button
+            document.getElementById(tabId).classList.add('active');
+            clickedButton.classList.add('active');
+        }
+    </script>
 
 </body>
 </html>
