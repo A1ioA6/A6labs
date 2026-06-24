@@ -21,12 +21,39 @@
             --success: #22c55e;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        .sidebar { width: 240px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; position: fixed; height: 100vh; gap: 4px; z-index: 100; transition: transform 0.3s ease; }
-        .sidebar.collapsed { transform: translateX(-240px); }
-        .sidebar-logo { font-size: 1.3rem; font-weight: 800; color: var(--text); padding: 0 8px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; letter-spacing: -0.5px; }
+        /* --- SIDEBAR CSS --- */
+        .sidebar { 
+            width: 240px; 
+            background: var(--sidebar); 
+            border-right: 1px solid var(--border); 
+            padding: 24px 16px; 
+            display: flex; 
+            flex-direction: column; 
+            position: fixed; 
+            height: 100vh; 
+            gap: 4px; 
+            z-index: 1001; 
+            transform: translateX(0);
+            transition: transform 0.3s ease; 
+        }
+        .sidebar.closed { transform: translateX(-100%); } /* Desktop close */
+        
+        .sidebar-logo { 
+            font-size: 1.3rem; font-weight: 800; color: var(--text); 
+            padding: 0 4px 20px; border-bottom: 1px solid var(--border); 
+            margin-bottom: 12px; letter-spacing: -0.5px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
         .sidebar-logo span { color: var(--accent); }
+        
+        .close-sidebar-btn {
+            background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer;
+            padding: 4px 8px; border-radius: 6px; transition: 0.2s;
+        }
+        .close-sidebar-btn:hover { background: var(--border); color: var(--text); }
+
         .menu-btn { background: none; border: none; color: var(--muted); padding: 10px 12px; text-align: left; font-size: 0.9rem; cursor: pointer; border-radius: 8px; width: 100%; display: flex; align-items: center; gap: 10px; transition: all 0.15s; }
         .menu-btn:hover { background: var(--border); color: var(--text); }
         .menu-btn.active { background: var(--accent); color: #fff; font-weight: 600; }
@@ -35,14 +62,34 @@
         .logout-btn { background: #2a1a1a; border: 1px solid #4a2222; color: #f87171; padding: 10px 12px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 0.9rem; font-weight: 600; }
         .logout-btn:hover { background: var(--red); color: white; border-color: var(--red); }
 
-        .sidebar-toggle { position: fixed; top: 16px; left: 16px; z-index: 200; background: var(--accent); border: none; color: white; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; display: none; align-items: center; justify-content: center; }
-
-        .main { margin-left: 240px; flex: 1; padding: 32px 40px; transition: margin-left 0.3s ease; }
-        .main.expanded { margin-left: 0; }
+        /* --- MAIN DASHBOARD CSS --- */
+        .main { 
+            margin-left: 240px; 
+            flex: 1; 
+            padding: 32px 40px; 
+            transition: margin-left 0.3s ease, padding-left 0.3s ease; 
+            width: 100%;
+        }
+        .main.expanded { 
+            margin-left: 0; 
+            padding-left: 80px; /* Leaves room for the hamburger button */
+        }
+        
         .page-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 24px; color: var(--text); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        /* --- FLOATING HAMBURGER BUTTON --- */
+        .sidebar-toggle { 
+            position: fixed; top: 20px; left: 20px; z-index: 900; /* Hidden under open sidebar */
+            background: var(--card); border: 1px solid var(--border); color: var(--text); 
+            width: 42px; height: 42px; border-radius: 8px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s;
+        }
+        .sidebar-toggle:hover { background: var(--border); }
+
+        /* --- CARDS & GRIDS --- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
         .stat-card .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 8px; }
@@ -50,10 +97,11 @@
         .progress-bar { background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
         .progress-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
 
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; width: 100%; overflow: hidden; }
         .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
+        /* --- FORMS --- */
         .form-row { margin-bottom: 14px; }
         .form-row label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
         .form-row input, .form-row select { width: 100%; padding: 10px 12px; background: #0f1115; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem; }
@@ -65,6 +113,7 @@
         .btn-green { background: var(--accent); color: white; }
         .btn-blue { background: var(--blue); color: white; }
 
+        /* --- WATER & MACROS --- */
         .water-controls { display: flex; align-items: center; gap: 16px; margin: 16px 0; }
         .btn-circle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 1.2rem; cursor: pointer; font-weight: bold; flex-shrink: 0; }
         .btn-circle:hover { background: var(--accent); border-color: var(--accent); }
@@ -90,10 +139,13 @@
         .cal-cut { border-color: var(--red); }
         .cal-bulk { border-color: var(--success); }
 
+        /* --- TABLE & SCHEDULE --- */
         .day-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
         .day-tab { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border); background: none; color: var(--muted); cursor: pointer; font-size: 0.82rem; font-weight: 600; }
         .day-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .schedule-table { width: 100%; border-collapse: collapse; }
+        
+        .table-responsive { overflow-x: auto; width: 100%; border-radius: 8px; }
+        .schedule-table { width: 100%; border-collapse: collapse; min-width: 350px; }
         .schedule-table th { padding: 10px 14px; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
         .schedule-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: middle; }
         .schedule-table tr:last-child td { border-bottom: none; }
@@ -102,25 +154,27 @@
         .empty-state { color: var(--muted); font-style: italic; font-size: 0.9rem; padding: 24px 0; text-align: center; }
 
         .streak-badge { display: inline-flex; align-items: center; gap: 8px; background: #2a1f0a; border: 1px solid #7c5c1e; color: #fcd34d; padding: 8px 16px; border-radius: 99px; font-weight: 700; font-size: 0.9rem; margin-bottom: 20px; }
-        .chart-wrap { position: relative; height: 240px; margin-top: 16px; }
+        .chart-wrap { position: relative; height: 240px; margin-top: 16px; width: 100%; }
         .result-box { background: #0d1f17; border: 1px solid var(--accent); border-radius: 10px; padding: 16px; margin-top: 16px; display: none; }
         .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(2px); }
+        .overlay.active { display: block; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
         @media(max-width: 768px) {
-            .sidebar-toggle { display: flex; }
-            .sidebar { transform: translateX(-240px); }
-            .sidebar.open { transform: translateX(0); }
-            .main { margin-left: 0; padding: 20px 16px; }
+            .sidebar { transform: translateX(-100%); } /* Hidden default on mobile */
+            .sidebar.open { transform: translateX(0); } /* Open state on mobile */
+            
+            .main { margin-left: 0; padding: 80px 16px 20px !important; } /* Space for hamburger */
+            .main.expanded { padding-left: 16px; }
+            
             .two-col { grid-template-columns: 1fr; }
             .macro-grid { grid-template-columns: repeat(2, 1fr); }
             .calorie-row { grid-template-columns: 1fr; }
-            .page-title { margin-top: 40px; }
-            .inline-row { flex-direction: column; }
+            .inline-row { flex-direction: column; align-items: stretch; }
             .inline-row .btn { width: 100%; }
         }
-
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
-        .overlay.active { display: block; }
     </style>
 </head>
 <body>
@@ -129,7 +183,10 @@
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div class="sidebar" id="sidebar">
-    <div class="sidebar-logo">A6 <span>Labs</span></div>
+    <div class="sidebar-logo">
+        <div>A6 <span>Labs</span></div>
+        <button class="close-sidebar-btn" onclick="toggleSidebar()">✕</button>
+    </div>
     <button class="menu-btn active" onclick="switchTab('overview', this)">📊 Dashboard</button>
     <button class="menu-btn" onclick="switchTab('fitness', this)">💪 Health & Nutrition</button>
     <button class="menu-btn" onclick="switchTab('schedule', this)">📅 Daily Schedule</button>
@@ -186,7 +243,7 @@
                     <label>Age</label>
                     <input type="number" id="age-input" placeholder="e.g. 24">
                 </div>
-                <button class="btn btn-green" onclick="calculateMetrics()">Calculate & Save</button>
+                <button class="btn btn-green" onclick="calculateMetrics()" style="width: 100%">Calculate & Save</button>
 
                 <div class="result-box" id="metrics-results">
                     <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
@@ -252,7 +309,7 @@
         <div class="card">
             <h3>Weight Progress Chart</h3>
             <div class="inline-row" style="margin-bottom:12px;">
-                <input type="number" id="log-weight-val" placeholder="Log today's weight (kg)" style="padding:10px 12px; background:#0f1115; border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.9rem; flex:1;">
+                <input type="number" id="log-weight-val" placeholder="Log today's weight (kg)">
                 <button class="btn btn-green" onclick="addWeightLog()">Log Weight</button>
             </div>
             <div class="chart-wrap"><canvas id="weightChart"></canvas></div>
@@ -267,7 +324,7 @@
                 <label>Task</label>
                 <input type="text" id="task-input" placeholder="e.g. Morning run, Take vitamins...">
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+            <div class="two-col" style="margin-bottom:14px; gap:12px;">
                 <div class="form-row" style="margin-bottom:0;">
                     <label>Day</label>
                     <select id="task-day">
@@ -310,12 +367,33 @@
     let tasks = {};
     let activeDay = 'Monday';
 
+    // Smart Toggle Logic for Desktop AND Mobile
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main');
         const overlay = document.getElementById('overlay');
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('active');
+
+        if (window.innerWidth <= 768) {
+            // Mobile Action
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        } else {
+            // Desktop Action
+            sidebar.classList.toggle('closed');
+            main.classList.toggle('expanded');
+        }
     }
+
+    // Fix layout bugs if someone rotates their iPad or resizes the window
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        } else {
+            document.getElementById('sidebar').classList.remove('closed');
+            document.getElementById('main').classList.remove('expanded');
+        }
+    });
 
     window.onload = async function() {
         const { data: { session } } = await sb.auth.getSession();
@@ -333,15 +411,16 @@
         document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar.classList.contains('open')) toggleSidebar();
+        
+        // Auto-close sidebar on mobile when a link is clicked
+        if (window.innerWidth <= 768) toggleSidebar();
     }
 
     async function loadAllData() {
         const today = new Date().toISOString().split('T')[0];
         try {
             const { data: w, error } = await sb.from('water_logs').select('glasses').eq('user_id', currentUser.id).eq('date', today).single();
-            if (error && error.code !== 'PGRST116') throw error; // Ignore "no rows found" error
+            if (error && error.code !== 'PGRST116') throw error; 
             if (w) { waterAmount = w.glasses * 250; updateWaterUI(); }
         } catch(e) { console.error("Water load error:", e); }
         
@@ -559,11 +638,14 @@
         if (btn) btn.classList.add('active');
         const container = document.getElementById('schedule-view');
         const dayTasks = (tasks[day] || []).slice().sort((a, b) => a.time.localeCompare(b.time));
+        
         if (dayTasks.length === 0) {
             container.innerHTML = '<div class="empty-state">No tasks for ' + day + '. Add one above!</div>';
             return;
         }
-        let html = '<table class="schedule-table"><thead><tr><th style="width:110px;">Time</th><th>Task</th><th style="width:50px;"></th></tr></thead><tbody>';
+        
+        /* Wrapped the table in a responsive div so it doesn't break mobile screens */
+        let html = '<div class="table-responsive"><table class="schedule-table"><thead><tr><th style="width:110px;">Time</th><th>Task</th><th style="width:50px;"></th></tr></thead><tbody>';
         dayTasks.forEach(t => {
             const [h, m] = t.time.split(':');
             const hr = parseInt(h);
@@ -572,7 +654,7 @@
             const timeStr = (dh < 10 ? '0'+dh : dh) + ':' + m + ' ' + ampm;
             html += `<tr><td style="color:var(--blue); font-weight:600;">${timeStr}</td><td>${t.text}</td><td><button class="delete-btn" onclick="deleteTask('${t.id}', '${day}')">✕</button></td></tr>`;
         });
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         container.innerHTML = html;
     }
 
