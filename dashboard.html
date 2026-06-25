@@ -17,7 +17,6 @@
             --red: #ef4444;
             --orange: #f97316;
             --yellow: #eab308;
-            --purple: #8b5cf6;
             --text: #e2e8f0;
             --muted: #64748b;
             --success: #22c55e;
@@ -62,13 +61,11 @@
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-        /* --- DASHBOARD WIDGETS --- */
+        /* --- NEW DASHBOARD WIDGETS --- */
         .agenda-list { list-style: none; padding: 0; }
         .agenda-item { background: var(--bg); border: 1px solid var(--border); padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .agenda-time { font-size: 0.8rem; color: var(--blue); font-weight: 600; }
         .quick-actions { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
-        .focus-input { width: 100%; background: transparent; border: none; color: var(--text); font-size: 1.1rem; padding: 8px 0; border-bottom: 1px dashed var(--muted); outline: none; transition: 0.2s; }
-        .focus-input:focus { border-bottom-color: var(--accent); }
 
         /* --- FORMS --- */
         .form-row { margin-bottom: 14px; }
@@ -85,7 +82,7 @@
         .btn-outline:hover { background: var(--border); }
 
         /* --- CENTERED TRACKERS --- */
-        .tracker-controls { display: flex; align-items: center; justify-content: center; gap: 24px; margin: 16px 0; }
+        .tracker-controls { display: flex; align-items: center; justify-content: center; gap: 24px; margin: 20px 0; }
         .btn-circle { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 1.4rem; cursor: pointer; font-weight: bold; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-circle:hover { background: var(--border); }
         .tracker-amount { font-size: 1.6rem; font-weight: 700; min-width: 100px; text-align: center; }
@@ -168,19 +165,15 @@
 
 <div class="main" id="main">
 
+    <!-- OVERVIEW TAB -->
     <div id="overview" class="tab-content active">
         <div class="page-title">
             <span id="greeting-text">Dashboard</span>
             <div id="streak-display" class="streak-badge">🔥 0 Day Streak</div>
         </div>
 
-        <div class="card" style="margin-bottom: 24px; padding: 20px;">
-            <h3 style="margin-bottom: 8px; color: var(--muted); font-size: 0.85rem; text-transform: uppercase;">🎯 Daily Focus</h3>
-            <input type="text" class="focus-input" id="daily-focus-input" placeholder="What is your main priority for today?" onblur="saveDailyFocus()">
-        </div>
-
         <div class="quick-actions">
-            <button class="btn btn-outline" onclick="switchTab('fitness', document.querySelectorAll('.menu-btn')[1])">💧 Track Health</button>
+            <button class="btn btn-outline" onclick="switchTab('fitness', document.querySelectorAll('.menu-btn')[1])">💧 Log Water</button>
             <button class="btn btn-outline" onclick="switchTab('meals', document.querySelectorAll('.menu-btn')[2])">🍳 Create Meal</button>
             <button class="btn btn-outline" onclick="switchTab('schedule', document.querySelectorAll('.menu-btn')[3])">📅 Add Task</button>
         </div>
@@ -197,9 +190,8 @@
                 <div class="progress-bar"><div class="progress-fill" id="dash-steps-bar" style="width:0%; background: var(--success);"></div></div>
             </div>
             <div class="stat-card">
-                <div class="label">🌙 Sleep Last Night</div>
-                <div class="value" id="dash-sleep">0 h</div>
-                <div class="progress-bar"><div class="progress-fill" id="dash-sleep-bar" style="width:0%; background: var(--purple);"></div></div>
+                <div class="label">⚖️ Last Weight</div>
+                <div class="value" id="dash-weight">-- kg</div>
             </div>
             <div class="stat-card">
                 <div class="label">🔥 Maintenance</div>
@@ -212,7 +204,8 @@
                 <h3>📅 Today's Agenda</h3>
                 <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;" id="agenda-date">Loading...</p>
                 <ul class="agenda-list" id="dashboard-agenda">
-                    </ul>
+                    <!-- Tasks injected here -->
+                </ul>
             </div>
             <div class="card">
                 <h3>Welcome to A6 Labs</h3>
@@ -221,49 +214,33 @@
         </div>
     </div>
 
+    <!-- HEALTH & NUTRITION TAB -->
     <div id="fitness" class="tab-content">
         <div class="page-title">Health & Nutrition</div>
         
-        <div class="three-col">
+        <div class="two-col">
+            <!-- WATER TRACKER -->
             <div class="card" style="text-align: center;">
-                <h3>💧 Water</h3>
-                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 4px;">Target: 3000 ml</p>
+                <h3>💧 Water Tracker</h3>
+                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 4px;">Daily target: 3000 ml</p>
                 <div class="tracker-controls">
                     <button class="btn-circle" onclick="updateWater(-250)">−</button>
                     <div class="tracker-amount" id="water-display">0 ml</div>
                     <button class="btn-circle" onclick="updateWater(250)">+</button>
                 </div>
-                <div class="inline-row" style="justify-content: center; margin-top: 12px;">
-                    <input type="number" id="manual-water" placeholder="Custom ml" style="width: 120px; text-align: center;">
-                    <button class="btn btn-outline" onclick="addManualWater()">Log</button>
-                </div>
-                <div class="progress-bar" style="margin-top: 16px;"><div class="progress-fill" id="water-bar" style="width:0%; background:var(--blue);"></div></div>
+                <div class="progress-bar"><div class="progress-fill" id="water-bar" style="width:0%; background:var(--blue);"></div></div>
             </div>
 
+            <!-- STEP TRACKER -->
             <div class="card" style="text-align: center;">
-                <h3>👟 Steps</h3>
-                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 4px;">Target: 10,000</p>
+                <h3>👟 Step Tracker</h3>
+                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 4px;">Daily target: 10,000 steps</p>
                 <div class="tracker-controls">
                     <button class="btn-circle" onclick="updateSteps(-500)">−</button>
                     <div class="tracker-amount" id="steps-display">0</div>
                     <button class="btn-circle" onclick="updateSteps(500)">+</button>
                 </div>
-                <div class="inline-row" style="justify-content: center; margin-top: 12px;">
-                    <input type="number" id="manual-steps" placeholder="Custom steps" style="width: 120px; text-align: center;">
-                    <button class="btn btn-outline" onclick="addManualSteps()">Log</button>
-                </div>
-                <div class="progress-bar" style="margin-top: 16px;"><div class="progress-fill" id="steps-bar" style="width:0%; background:var(--success);"></div></div>
-            </div>
-
-            <div class="card" style="text-align: center;">
-                <h3>🌙 Sleep</h3>
-                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 4px;">Target: 8 hours</p>
-                <div class="tracker-controls">
-                    <button class="btn-circle" onclick="updateSleep(-0.5)">−</button>
-                    <div class="tracker-amount" id="sleep-display">0 h</div>
-                    <button class="btn-circle" onclick="updateSleep(0.5)">+</button>
-                </div>
-                <div style="height: 38px; margin-top: 12px;"></div> <div class="progress-bar" style="margin-top: 16px;"><div class="progress-fill" id="sleep-bar" style="width:0%; background:var(--purple);"></div></div>
+                <div class="progress-bar"><div class="progress-fill" id="steps-bar" style="width:0%; background:var(--success);"></div></div>
             </div>
         </div>
 
@@ -308,6 +285,7 @@
         </div>
     </div>
 
+    <!-- AI MEALS TAB -->
     <div id="meals" class="tab-content">
         <div class="page-title">Chef AI</div>
         <div class="card">
@@ -342,6 +320,7 @@
             
             <button class="btn btn-blue" id="ai-btn" onclick="generateAIMeal()" style="width: 100%; font-size: 1rem; padding: 12px;">✨ Generate Meal</button>
 
+            <!-- Generated Result -->
             <div class="ai-result-card" id="ai-result">
                 <h4 id="ai-meal-name">Meal Name</h4>
                 <div class="ai-recipe-text" id="ai-meal-prep">Instructions go here.</div>
@@ -358,6 +337,7 @@
         </div>
     </div>
 
+    <!-- DAILY SCHEDULE TAB -->
     <div id="schedule" class="tab-content">
         <div class="page-title">Daily Schedule</div>
         <div class="card">
@@ -412,7 +392,6 @@
     let currentUser = null;
     let waterAmount = 0;
     let stepAmount = 0;
-    let sleepAmount = 0;
     let weightChart = null;
     let tasks = {};
     let activeDay = 'Monday';
@@ -460,19 +439,11 @@
         const options = { weekday: 'long', month: 'short', day: 'numeric' };
         document.getElementById('agenda-date').textContent = new Date().toLocaleDateString('en-US', options);
         
-        // Load local storage items
+        // Load local steps
         const todayStr = new Date().toISOString().split('T')[0];
-        
-        const focusText = localStorage.getItem('a6_focus_' + todayStr);
-        if(focusText) document.getElementById('daily-focus-input').value = focusText;
-
         const savedSteps = localStorage.getItem('a6_steps_' + todayStr);
         if(savedSteps) stepAmount = parseInt(savedSteps);
         updateStepsUI();
-
-        const savedSleep = localStorage.getItem('a6_sleep_' + todayStr);
-        if(savedSleep) sleepAmount = parseFloat(savedSleep);
-        updateSleepUI();
     }
 
     function switchTab(id, btn) {
@@ -481,12 +452,6 @@
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
         if (window.innerWidth <= 768) toggleSidebar();
-    }
-
-    function saveDailyFocus() {
-        const text = document.getElementById('daily-focus-input').value;
-        const todayStr = new Date().toISOString().split('T')[0];
-        localStorage.setItem('a6_focus_' + todayStr, text);
     }
 
     // --- AI MEAL GENERATOR LOGIC ---
@@ -527,12 +492,12 @@
     async function loadAllData() {
         const today = new Date().toISOString().split('T')[0];
         try {
-            const { data: w } = await sb.from('water_logs').select('glasses').eq('user_id', currentUser.id).eq('date', today).single();
+            const { data: w, error } = await sb.from('water_logs').select('glasses').eq('user_id', currentUser.id).eq('date', today).single();
             if (w) { waterAmount = w.glasses * 250; updateWaterUI(); }
         } catch(e) {}
         
         try {
-            const { data: s } = await sb.from('user_stats').select('*').eq('id', currentUser.id).single();
+            const { data: s, error } = await sb.from('user_stats').select('*').eq('id', currentUser.id).single();
             if (s) {
                 document.getElementById('dash-weight').textContent = (s.weight || '--') + ' kg';
                 document.getElementById('dash-tdee').textContent = s.tdee ? Math.round(s.tdee) + ' kcal' : '--';
@@ -543,7 +508,7 @@
         } catch(e) {}
         
         try {
-            const { data: wl } = await sb.from('weight_logs').select('weight, date').eq('user_id', currentUser.id).order('date', { ascending: true });
+            const { data: wl, error } = await sb.from('weight_logs').select('weight, date').eq('user_id', currentUser.id).order('date', { ascending: true });
             if (wl && wl.length > 0) {
                 weightChart.data.labels = wl.map(l => new Date(l.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
                 weightChart.data.datasets[0].data = wl.map(l => parseFloat(l.weight));
@@ -553,12 +518,13 @@
         } catch(e) {}
         
         try {
-            const { data: td } = await sb.from('workout_logs').select('*').eq('user_id', currentUser.id);
+            const { data: td, error } = await sb.from('workout_logs').select('*').eq('user_id', currentUser.id);
             if (td) {
                 tasks = {};
                 td.forEach(t => {
                     const day = t.muscle_group;
                     if (!tasks[day]) tasks[day] = [];
+                    // Extract priority if we embedded it in the text string previously (e.g. "[High] Task Name")
                     let prio = "Medium";
                     let text = t.exercise;
                     if(text.startsWith("[High] ")) { prio = "High"; text = text.replace("[High] ", ""); }
@@ -590,7 +556,6 @@
         } catch(e) {}
     }
 
-    // --- TRACKER LOGIC ---
     function updateWaterUI() {
         const pct = Math.min((waterAmount / 3000) * 100, 100);
         document.getElementById('water-display').textContent = waterAmount + ' ml';
@@ -607,13 +572,6 @@
         try { await sb.from('water_logs').upsert({ user_id: currentUser.id, date: today, glasses }, { onConflict: 'user_id,date' }); } catch(e) {}
     }
 
-    function addManualWater() {
-        const val = parseInt(document.getElementById('manual-water').value);
-        if(!val) return;
-        updateWater(val);
-        document.getElementById('manual-water').value = '';
-    }
-
     function updateStepsUI() {
         const pct = Math.min((stepAmount / 10000) * 100, 100);
         document.getElementById('steps-display').textContent = stepAmount;
@@ -626,29 +584,7 @@
         stepAmount = Math.max(0, stepAmount + amount);
         updateStepsUI();
         const todayStr = new Date().toISOString().split('T')[0];
-        localStorage.setItem('a6_steps_' + todayStr, stepAmount);
-    }
-
-    function addManualSteps() {
-        const val = parseInt(document.getElementById('manual-steps').value);
-        if(!val) return;
-        updateSteps(val);
-        document.getElementById('manual-steps').value = '';
-    }
-
-    function updateSleepUI() {
-        const pct = Math.min((sleepAmount / 8) * 100, 100);
-        document.getElementById('sleep-display').textContent = sleepAmount + ' h';
-        document.getElementById('sleep-bar').style.width = pct + '%';
-        document.getElementById('dash-sleep').textContent = sleepAmount + ' h';
-        document.getElementById('dash-sleep-bar').style.width = pct + '%';
-    }
-
-    function updateSleep(amount) {
-        sleepAmount = Math.max(0, sleepAmount + amount);
-        updateSleepUI();
-        const todayStr = new Date().toISOString().split('T')[0];
-        localStorage.setItem('a6_sleep_' + todayStr, sleepAmount);
+        localStorage.setItem('a6_steps_' + todayStr, stepAmount); // Save locally for now
     }
 
     function calculateMetrics() {
@@ -690,7 +626,7 @@
         try {
             await sb.from('weight_logs').insert({ user_id: currentUser.id, date: today, weight: val });
             document.getElementById('log-weight-val').value = '';
-            loadAllData();
+            loadAllData(); // Reload chart
         } catch(e) {}
     }
 
@@ -701,6 +637,7 @@
         const prio = document.getElementById('task-priority').value;
         if (!text) return;
         
+        // Append priority to string to avoid needing a new DB column right now
         const dbString = `[${prio}] ${text}`;
 
         try {
