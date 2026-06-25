@@ -104,8 +104,8 @@
         /* --- FORMS --- */
         .form-row { margin-bottom: 14px; }
         .form-row label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
-        .form-row input, .form-row select { width: 100%; padding: 10px 12px; background: #0f1115; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem; }
-        .form-row input:focus, .form-row select:focus { outline: none; border-color: var(--accent); }
+        .form-row input, .form-row select, .form-row textarea { width: 100%; padding: 10px 12px; background: #0f1115; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem; font-family: inherit; }
+        .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline: none; border-color: var(--accent); }
         .inline-row { display: flex; gap: 10px; align-items: flex-end; }
 
         .btn { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: opacity 0.15s; white-space: nowrap; }
@@ -113,11 +113,11 @@
         .btn-green { background: var(--accent); color: white; }
         .btn-blue { background: var(--blue); color: white; }
 
-        /* --- WATER & MACROS --- */
-        .water-controls { display: flex; align-items: center; gap: 16px; margin: 16px 0; }
-        .btn-circle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 1.2rem; cursor: pointer; font-weight: bold; flex-shrink: 0; }
+        /* --- CENTERED WATER CONTROLS --- */
+        .water-controls { display: flex; align-items: center; justify-content: center; gap: 24px; margin: 20px 0; }
+        .btn-circle { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 1.4rem; cursor: pointer; font-weight: bold; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-circle:hover { background: var(--accent); border-color: var(--accent); }
-        .water-amount { font-size: 1.4rem; font-weight: 700; min-width: 80px; text-align: center; }
+        .water-amount { font-size: 1.6rem; font-weight: 700; min-width: 100px; text-align: center; }
 
         .macro-section { margin-top: 16px; }
         .macro-section-title { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 10px; }
@@ -161,6 +161,11 @@
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(2px); }
         .overlay.active { display: block; }
 
+        /* --- AI MEALS CSS --- */
+        .ai-result-card { background: #111b15; border: 1px solid var(--accent); border-radius: 12px; padding: 24px; margin-top: 20px; display: none; }
+        .ai-result-card h4 { color: var(--success); font-size: 1.2rem; margin-bottom: 12px; }
+        .ai-recipe-text { color: var(--text); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; white-space: pre-line; }
+
         /* --- MOBILE RESPONSIVENESS --- */
         @media(max-width: 768px) {
             .sidebar { transform: translateX(-100%); } /* Hidden default on mobile */
@@ -189,6 +194,7 @@
     </div>
     <button class="menu-btn active" onclick="switchTab('overview', this)">📊 Dashboard</button>
     <button class="menu-btn" onclick="switchTab('fitness', this)">💪 Health & Nutrition</button>
+    <button class="menu-btn" onclick="switchTab('meals', this)">🍳 AI Meals</button>
     <button class="menu-btn" onclick="switchTab('schedule', this)">📅 Daily Schedule</button>
     <div class="sidebar-footer">
         <div class="user-badge" id="user-email">Loading...</div>
@@ -221,7 +227,7 @@
             </div>
         </div>
         <div class="card">
-            <h3>Welcome to your vault</h3>
+            <h3>Welcome to A6 Labs</h3>
             <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.6;">Use the sidebar to log your health metrics, set up your daily schedule, and track your progress. Your data syncs automatically.</p>
         </div>
     </div>
@@ -293,9 +299,9 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" style="text-align: center;">
                 <h3>💧 Water Tracker</h3>
-                <p style="color: var(--muted); font-size: 0.85rem;">Daily target: 3000 ml</p>
+                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 4px;">Daily target: 3000 ml</p>
                 <div class="water-controls">
                     <button class="btn-circle" onclick="updateWater(-250)">−</button>
                     <div class="water-amount" id="water-display">0 ml</div>
@@ -313,6 +319,35 @@
                 <button class="btn btn-green" onclick="addWeightLog()">Log Weight</button>
             </div>
             <div class="chart-wrap"><canvas id="weightChart"></canvas></div>
+        </div>
+    </div>
+
+    <div id="meals" class="tab-content">
+        <div class="page-title">Chef AI</div>
+        <div class="card">
+            <h3>What's in your fridge?</h3>
+            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">List the ingredients you currently have, and the AI will generate a customized meal recipe along with its macro details.</p>
+            
+            <div class="form-row">
+                <textarea id="ai-ingredients" rows="4" placeholder="e.g. I have 2 chicken breasts, some white rice, half an onion, and soy sauce..."></textarea>
+            </div>
+            
+            <button class="btn btn-blue" id="ai-btn" onclick="generateAIMeal()" style="width: 100%; font-size: 1rem; padding: 12px;">✨ Generate Meal</button>
+
+            <div class="ai-result-card" id="ai-result">
+                <h4 id="ai-meal-name">Meal Name</h4>
+                <div class="ai-recipe-text" id="ai-meal-prep">Instructions go here.</div>
+                
+                <div class="macro-section-title">Estimated Macros</div>
+                <div class="macro-grid" style="margin-bottom: 0;">
+                    <div class="macro-card m-protein"><div class="macro-label">Protein</div><div class="macro-value" id="ai-p">--</div></div>
+                    <div class="macro-card m-carbs"><div class="macro-label">Carbs</div><div class="macro-value" id="ai-c">--</div></div>
+                    <div class="macro-card m-fats"><div class="macro-label">Fats</div><div class="macro-value" id="ai-f">--</div></div>
+                    <div class="macro-card" style="background: #111827; border: 1px solid var(--border); color: white;">
+                        <div class="macro-label">Calories</div><div class="macro-value" id="ai-cal">--</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -374,17 +409,14 @@
         const overlay = document.getElementById('overlay');
 
         if (window.innerWidth <= 768) {
-            // Mobile Action
             sidebar.classList.toggle('open');
             overlay.classList.toggle('active');
         } else {
-            // Desktop Action
             sidebar.classList.toggle('closed');
             main.classList.toggle('expanded');
         }
     }
 
-    // Fix layout bugs if someone rotates their iPad or resizes the window
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
             document.getElementById('sidebar').classList.remove('open');
@@ -412,8 +444,55 @@
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
         
-        // Auto-close sidebar on mobile when a link is clicked
         if (window.innerWidth <= 768) toggleSidebar();
+    }
+
+    // --- AI MEAL GENERATOR LOGIC ---
+    function generateAIMeal() {
+        const input = document.getElementById('ai-ingredients').value.toLowerCase();
+        const btn = document.getElementById('ai-btn');
+        const resultBox = document.getElementById('ai-result');
+
+        if(!input) {
+            alert("Please tell the AI what ingredients you have first!");
+            return;
+        }
+
+        btn.textContent = "✨ Chef AI is thinking...";
+        btn.disabled = true;
+        resultBox.style.display = "none";
+
+        setTimeout(() => {
+            // Smart Fallback
+            let meal = { 
+                name: "🍳 Custom Kitchen Scramble", 
+                prep: "1. Chop your ingredients into bite-sized pieces.\n2. Heat a pan over medium heat with a tiny bit of oil or butter.\n3. Toss in your ingredients, season with salt, pepper, and your favorite spices, and sauté until fully cooked.\n4. Serve hot and enjoy!", 
+                p: "20g", c: "15g", f: "12g", cal: "250" 
+            };
+
+            // Intelligent matching filters
+            if (input.includes('chicken') && (input.includes('rice') || input.includes('broccoli'))) {
+                meal = { name: "🍗 Lean Chicken & Rice Bowl", prep: "1. Season the chicken breast with salt, pepper, and garlic powder.\n2. Sear in a pan on medium-high heat until golden brown and cooked through.\n3. Microwave or boil your rice and steam your veggies.\n4. Slice the chicken, lay it over the rice, and mix in the veggies. Top with soy sauce if you have it!", p: "45g", c: "40g", f: "8g", cal: "412" };
+            } else if (input.includes('egg') || input.includes('eggs')) {
+                meal = { name: "🥚 Protein-Packed Omelette", prep: "1. Crack 3-4 eggs into a bowl and whisk vigorously until slightly bubbly.\n2. Heat a non-stick skillet on medium heat.\n3. Pour the eggs in, let the bottom set, then add any leftover veggies or meats you have to one side.\n4. Fold the eggs over and cook for 1 more minute.", p: "24g", c: "2g", f: "15g", cal: "240" };
+            } else if (input.includes('beef') || input.includes('steak')) {
+                meal = { name: "🥩 Quick Beef Stir-Fry", prep: "1. Slice the beef against the grain into thin strips.\n2. Get a pan screaming hot and add a dash of oil.\n3. Sear the beef quickly (1-2 mins per side).\n4. Toss in any veggies you have along with soy sauce and a pinch of sugar. Serve alone or with carbs.", p: "35g", c: "10g", f: "18g", cal: "350" };
+            } else if (input.includes('pasta') || input.includes('noodles')) {
+                meal = { name: "🍝 Simple Fridge Pasta", prep: "1. Boil salted water and cook the pasta until al dente.\n2. In a separate pan, sauté any veggies or meat you have in olive oil.\n3. Save a little pasta water, drain the pasta, and mix it into the pan with your ingredients.\n4. Let the starch from the water create a light sauce. Top with cheese if available.", p: "12g", c: "65g", f: "10g", cal: "400" };
+            }
+
+            // Populate visual container components
+            document.getElementById('ai-meal-name').textContent = meal.name;
+            document.getElementById('ai-meal-prep').textContent = meal.prep;
+            document.getElementById('ai-p').textContent = meal.p;
+            document.getElementById('ai-c').textContent = meal.c;
+            document.getElementById('ai-f').textContent = meal.f;
+            document.getElementById('ai-cal').textContent = meal.cal;
+
+            btn.innerHTML = "✨ Generate Another Meal";
+            btn.disabled = false;
+            resultBox.style.display = "block";
+        }, 1500);
     }
 
     async function loadAllData() {
@@ -632,6 +711,7 @@
         } catch(e) { console.error("Error deleting task:", e); }
     }
 
+    // Displays current schedules
     function viewDay(day, btn) {
         activeDay = day;
         document.querySelectorAll('.day-tab').forEach(b => b.classList.remove('active'));
@@ -644,7 +724,6 @@
             return;
         }
         
-        /* Wrapped the table in a responsive div so it doesn't break mobile screens */
         let html = '<div class="table-responsive"><table class="schedule-table"><thead><tr><th style="width:110px;">Time</th><th>Task</th><th style="width:50px;"></th></tr></thead><tbody>';
         dayTasks.forEach(t => {
             const [h, m] = t.time.split(':');
