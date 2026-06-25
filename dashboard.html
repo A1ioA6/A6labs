@@ -16,6 +16,7 @@
             --blue: #3b82f6;
             --red: #ef4444;
             --orange: #f97316;
+            --yellow: #eab308;
             --text: #e2e8f0;
             --muted: #64748b;
             --success: #22c55e;
@@ -24,36 +25,12 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
 
         /* --- SIDEBAR CSS --- */
-        .sidebar { 
-            width: 240px; 
-            background: var(--sidebar); 
-            border-right: 1px solid var(--border); 
-            padding: 24px 16px; 
-            display: flex; 
-            flex-direction: column; 
-            position: fixed; 
-            height: 100vh; 
-            gap: 4px; 
-            z-index: 1001; 
-            transform: translateX(0);
-            transition: transform 0.3s ease; 
-        }
-        .sidebar.closed { transform: translateX(-100%); } /* Desktop close */
-        
-        .sidebar-logo { 
-            font-size: 1.3rem; font-weight: 800; color: var(--text); 
-            padding: 0 4px 20px; border-bottom: 1px solid var(--border); 
-            margin-bottom: 12px; letter-spacing: -0.5px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .sidebar { width: 240px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; position: fixed; height: 100vh; gap: 4px; z-index: 1001; transform: translateX(0); transition: transform 0.3s ease; }
+        .sidebar.closed { transform: translateX(-100%); } 
+        .sidebar-logo { font-size: 1.3rem; font-weight: 800; color: var(--text); padding: 0 4px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; letter-spacing: -0.5px; display: flex; justify-content: space-between; align-items: center; }
         .sidebar-logo span { color: var(--accent); }
-        
-        .close-sidebar-btn {
-            background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer;
-            padding: 4px 8px; border-radius: 6px; transition: 0.2s;
-        }
+        .close-sidebar-btn { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s; }
         .close-sidebar-btn:hover { background: var(--border); color: var(--text); }
-
         .menu-btn { background: none; border: none; color: var(--muted); padding: 10px 12px; text-align: left; font-size: 0.9rem; cursor: pointer; border-radius: 8px; width: 100%; display: flex; align-items: center; gap: 10px; transition: all 0.15s; }
         .menu-btn:hover { background: var(--border); color: var(--text); }
         .menu-btn.active { background: var(--accent); color: #fff; font-weight: 600; }
@@ -63,30 +40,12 @@
         .logout-btn:hover { background: var(--red); color: white; border-color: var(--red); }
 
         /* --- MAIN DASHBOARD CSS --- */
-        .main { 
-            margin-left: 240px; 
-            flex: 1; 
-            padding: 32px 40px; 
-            transition: margin-left 0.3s ease, padding-left 0.3s ease; 
-            width: 100%;
-        }
-        .main.expanded { 
-            margin-left: 0; 
-            padding-left: 80px; /* Leaves room for the hamburger button */
-        }
-        
-        .page-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 24px; color: var(--text); }
+        .main { margin-left: 240px; flex: 1; padding: 32px 40px; transition: margin-left 0.3s ease, padding-left 0.3s ease; width: 100%; }
+        .main.expanded { margin-left: 0; padding-left: 80px; }
+        .page-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 24px; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
-        /* --- FLOATING HAMBURGER BUTTON --- */
-        .sidebar-toggle { 
-            position: fixed; top: 20px; left: 20px; z-index: 900; /* Hidden under open sidebar */
-            background: var(--card); border: 1px solid var(--border); color: var(--text); 
-            width: 42px; height: 42px; border-radius: 8px; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s;
-        }
+        .sidebar-toggle { position: fixed; top: 20px; left: 20px; z-index: 900; background: var(--card); border: 1px solid var(--border); color: var(--text); width: 42px; height: 42px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s; }
         .sidebar-toggle:hover { background: var(--border); }
 
         /* --- CARDS & GRIDS --- */
@@ -100,6 +59,13 @@
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; width: 100%; overflow: hidden; }
         .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+        /* --- NEW DASHBOARD WIDGETS --- */
+        .agenda-list { list-style: none; padding: 0; }
+        .agenda-item { background: var(--bg); border: 1px solid var(--border); padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .agenda-time { font-size: 0.8rem; color: var(--blue); font-weight: 600; }
+        .quick-actions { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
 
         /* --- FORMS --- */
         .form-row { margin-bottom: 14px; }
@@ -112,13 +78,16 @@
         .btn:hover { opacity: 0.85; }
         .btn-green { background: var(--accent); color: white; }
         .btn-blue { background: var(--blue); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { background: var(--border); }
 
-        /* --- CENTERED WATER CONTROLS --- */
-        .water-controls { display: flex; align-items: center; justify-content: center; gap: 24px; margin: 20px 0; }
+        /* --- CENTERED TRACKERS --- */
+        .tracker-controls { display: flex; align-items: center; justify-content: center; gap: 24px; margin: 20px 0; }
         .btn-circle { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 1.4rem; cursor: pointer; font-weight: bold; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-circle:hover { background: var(--accent); border-color: var(--accent); }
-        .water-amount { font-size: 1.6rem; font-weight: 700; min-width: 100px; text-align: center; }
+        .btn-circle:hover { background: var(--border); }
+        .tracker-amount { font-size: 1.6rem; font-weight: 700; min-width: 100px; text-align: center; }
 
+        /* --- MACROS --- */
         .macro-section { margin-top: 16px; }
         .macro-section-title { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 10px; }
         .macro-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
@@ -130,55 +99,47 @@
         .m-carbs { background: #3d2e0f; color: #fcd34d; }
         .m-fats { background: #1a2d1a; color: #86efac; }
         .m-fiber { background: #1e1a3d; color: #c4b5fd; }
-
         .calorie-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 16px; }
         .cal-box { padding: 12px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
         .cal-box .cal-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
         .cal-box .cal-value { font-size: 1.1rem; font-weight: 700; }
-        .cal-maintain { border-color: var(--blue); }
-        .cal-cut { border-color: var(--red); }
-        .cal-bulk { border-color: var(--success); }
 
         /* --- TABLE & SCHEDULE --- */
         .day-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
         .day-tab { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border); background: none; color: var(--muted); cursor: pointer; font-size: 0.82rem; font-weight: 600; }
         .day-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
-        
-        .table-responsive { overflow-x: auto; width: 100%; border-radius: 8px; }
         .schedule-table { width: 100%; border-collapse: collapse; min-width: 350px; }
         .schedule-table th { padding: 10px 14px; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
         .schedule-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: middle; }
-        .schedule-table tr:last-child td { border-bottom: none; }
         .delete-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; padding: 4px 8px; }
         .delete-btn:hover { color: var(--red); }
         .empty-state { color: var(--muted); font-style: italic; font-size: 0.9rem; padding: 24px 0; text-align: center; }
 
-        .streak-badge { display: inline-flex; align-items: center; gap: 8px; background: #2a1f0a; border: 1px solid #7c5c1e; color: #fcd34d; padding: 8px 16px; border-radius: 99px; font-weight: 700; font-size: 0.9rem; margin-bottom: 20px; }
+        .priority-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .prio-High { background-color: var(--red); }
+        .prio-Medium { background-color: var(--yellow); }
+        .prio-Low { background-color: var(--blue); }
+
+        .streak-badge { display: inline-flex; align-items: center; gap: 8px; background: #2a1f0a; border: 1px solid #7c5c1e; color: #fcd34d; padding: 8px 16px; border-radius: 99px; font-weight: 700; font-size: 0.9rem; }
         .chart-wrap { position: relative; height: 240px; margin-top: 16px; width: 100%; }
         .result-box { background: #0d1f17; border: 1px solid var(--accent); border-radius: 10px; padding: 16px; margin-top: 16px; display: none; }
-        .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
-
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(2px); }
         .overlay.active { display: block; }
 
-        /* --- AI MEALS CSS --- */
         .ai-result-card { background: #111b15; border: 1px solid var(--accent); border-radius: 12px; padding: 24px; margin-top: 20px; display: none; }
         .ai-result-card h4 { color: var(--success); font-size: 1.2rem; margin-bottom: 12px; }
         .ai-recipe-text { color: var(--text); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; white-space: pre-line; }
 
-        /* --- MOBILE RESPONSIVENESS --- */
         @media(max-width: 768px) {
-            .sidebar { transform: translateX(-100%); } /* Hidden default on mobile */
-            .sidebar.open { transform: translateX(0); } /* Open state on mobile */
-            
-            .main { margin-left: 0; padding: 80px 16px 20px !important; } /* Space for hamburger */
+            .sidebar { transform: translateX(-100%); } 
+            .sidebar.open { transform: translateX(0); } 
+            .main { margin-left: 0; padding: 80px 16px 20px !important; } 
             .main.expanded { padding-left: 16px; }
-            
-            .two-col { grid-template-columns: 1fr; }
+            .two-col, .three-col { grid-template-columns: 1fr; }
             .macro-grid { grid-template-columns: repeat(2, 1fr); }
-            .calorie-row { grid-template-columns: 1fr; }
             .inline-row { flex-direction: column; align-items: stretch; }
             .inline-row .btn { width: 100%; }
+            .page-title { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
     </style>
 </head>
@@ -204,9 +165,19 @@
 
 <div class="main" id="main">
 
+    <!-- OVERVIEW TAB -->
     <div id="overview" class="tab-content active">
-        <div class="page-title">Dashboard</div>
-        <div id="streak-display" class="streak-badge">🔥 0 Day Streak</div>
+        <div class="page-title">
+            <span id="greeting-text">Dashboard</span>
+            <div id="streak-display" class="streak-badge">🔥 0 Day Streak</div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="btn btn-outline" onclick="switchTab('fitness', document.querySelectorAll('.menu-btn')[1])">💧 Log Water</button>
+            <button class="btn btn-outline" onclick="switchTab('meals', document.querySelectorAll('.menu-btn')[2])">🍳 Create Meal</button>
+            <button class="btn btn-outline" onclick="switchTab('schedule', document.querySelectorAll('.menu-btn')[3])">📅 Add Task</button>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="label">💧 Water Today</div>
@@ -214,101 +185,93 @@
                 <div class="progress-bar"><div class="progress-fill" id="dash-water-bar" style="width:0%; background: var(--blue);"></div></div>
             </div>
             <div class="stat-card">
-                <div class="label">⚖️ Last Weight</div>
-                <div class="value" id="dash-weight">-- kg</div>
+                <div class="label">👟 Steps</div>
+                <div class="value" id="dash-steps">0</div>
+                <div class="progress-bar"><div class="progress-fill" id="dash-steps-bar" style="width:0%; background: var(--success);"></div></div>
             </div>
             <div class="stat-card">
-                <div class="label">🧬 BMI</div>
-                <div class="value" id="dash-bmi">--</div>
+                <div class="label">⚖️ Last Weight</div>
+                <div class="value" id="dash-weight">-- kg</div>
             </div>
             <div class="stat-card">
                 <div class="label">🔥 Maintenance</div>
                 <div class="value" id="dash-tdee">-- kcal</div>
             </div>
         </div>
-        <div class="card">
-            <h3>Welcome to A6 Labs</h3>
-            <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.6;">Use the sidebar to log your health metrics, set up your daily schedule, and track your progress. Your data syncs automatically.</p>
+
+        <div class="two-col">
+            <div class="card">
+                <h3>📅 Today's Agenda</h3>
+                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;" id="agenda-date">Loading...</p>
+                <ul class="agenda-list" id="dashboard-agenda">
+                    <!-- Tasks injected here -->
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Welcome to A6 Labs</h3>
+                <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.6;">Use the sidebar to log your health metrics, generate AI recipes, set up your daily schedule, and track your progress. Your data syncs automatically across your devices.</p>
+            </div>
         </div>
     </div>
 
+    <!-- HEALTH & NUTRITION TAB -->
     <div id="fitness" class="tab-content">
         <div class="page-title">Health & Nutrition</div>
+        
         <div class="two-col">
-            <div class="card">
-                <h3>BMI & Calorie Calculator</h3>
-                <div class="form-row">
-                    <label>Weight (kg)</label>
-                    <input type="number" id="weight-input" placeholder="e.g. 85">
-                </div>
-                <div class="form-row">
-                    <label>Height (cm)</label>
-                    <input type="number" id="height-input" placeholder="e.g. 178">
-                </div>
-                <div class="form-row">
-                    <label>Age</label>
-                    <input type="number" id="age-input" placeholder="e.g. 24">
-                </div>
-                <button class="btn btn-green" onclick="calculateMetrics()" style="width: 100%">Calculate & Save</button>
-
-                <div class="result-box" id="metrics-results">
-                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
-                        <span style="color:var(--muted); font-size:0.9rem;">BMI</span>
-                        <span style="font-weight:700; color:var(--success);" id="res-bmi">--</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); margin-bottom:12px;">
-                        <span style="color:var(--muted); font-size:0.9rem;">Status</span>
-                        <span style="font-weight:700; color:var(--success);" id="res-bmi-status">--</span>
-                    </div>
-                    <div class="macro-section-title">Daily Calories</div>
-                    <div class="calorie-row">
-                        <div class="cal-box cal-maintain"><div class="cal-label">Maintain</div><div class="cal-value" id="res-maintain" style="color:var(--blue);">--</div></div>
-                        <div class="cal-box cal-cut"><div class="cal-label">Cut</div><div class="cal-value" id="res-cut" style="color:var(--red);">--</div></div>
-                        <div class="cal-box cal-bulk"><div class="cal-label">Bulk</div><div class="cal-value" id="res-bulk" style="color:var(--success);">--</div></div>
-                    </div>
-                    <hr class="divider">
-                    <div class="macro-section">
-                        <div class="macro-section-title">🔵 Maintenance Macros</div>
-                        <div class="macro-grid">
-                            <div class="macro-card m-protein"><div class="macro-label">Protein</div><div class="macro-value" id="m-protein">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-carbs"><div class="macro-label">Carbs</div><div class="macro-value" id="m-carbs">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-fats"><div class="macro-label">Fats</div><div class="macro-value" id="m-fats">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-fiber"><div class="macro-label">Fiber</div><div class="macro-value" id="m-fiber">--</div><div class="macro-unit">g</div></div>
-                        </div>
-                    </div>
-                    <hr class="divider">
-                    <div class="macro-section">
-                        <div class="macro-section-title">🔴 Cut Macros (−500 kcal)</div>
-                        <div class="macro-grid">
-                            <div class="macro-card m-protein"><div class="macro-label">Protein</div><div class="macro-value" id="c-protein">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-carbs"><div class="macro-label">Carbs</div><div class="macro-value" id="c-carbs">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-fats"><div class="macro-label">Fats</div><div class="macro-value" id="c-fats">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-fiber"><div class="macro-label">Fiber</div><div class="macro-value" id="c-fiber">--</div><div class="macro-unit">g</div></div>
-                        </div>
-                    </div>
-                    <hr class="divider">
-                    <div class="macro-section">
-                        <div class="macro-section-title">🟢 Bulk Macros (+300 kcal)</div>
-                        <div class="macro-grid">
-                            <div class="macro-card m-protein"><div class="macro-label">Protein</div><div class="macro-value" id="b-protein">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-carbs"><div class="macro-label">Carbs</div><div class="macro-value" id="b-carbs">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-fats"><div class="macro-label">Fats</div><div class="macro-value" id="b-fats">--</div><div class="macro-unit">g</div></div>
-                            <div class="macro-card m-fiber"><div class="macro-label">Fiber</div><div class="macro-value" id="b-fiber">--</div><div class="macro-unit">g</div></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <!-- WATER TRACKER -->
             <div class="card" style="text-align: center;">
                 <h3>💧 Water Tracker</h3>
                 <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 4px;">Daily target: 3000 ml</p>
-                <div class="water-controls">
+                <div class="tracker-controls">
                     <button class="btn-circle" onclick="updateWater(-250)">−</button>
-                    <div class="water-amount" id="water-display">0 ml</div>
+                    <div class="tracker-amount" id="water-display">0 ml</div>
                     <button class="btn-circle" onclick="updateWater(250)">+</button>
                 </div>
                 <div class="progress-bar"><div class="progress-fill" id="water-bar" style="width:0%; background:var(--blue);"></div></div>
-                <p id="water-percent" style="font-size:0.8rem; color:var(--muted); margin-top:8px;">0% of daily goal</p>
+            </div>
+
+            <!-- STEP TRACKER -->
+            <div class="card" style="text-align: center;">
+                <h3>👟 Step Tracker</h3>
+                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 4px;">Daily target: 10,000 steps</p>
+                <div class="tracker-controls">
+                    <button class="btn-circle" onclick="updateSteps(-500)">−</button>
+                    <div class="tracker-amount" id="steps-display">0</div>
+                    <button class="btn-circle" onclick="updateSteps(500)">+</button>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="steps-bar" style="width:0%; background:var(--success);"></div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>BMI & Calorie Calculator</h3>
+            <div class="three-col" style="margin-bottom: 16px;">
+                <div class="form-row" style="margin-bottom:0;">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="weight-input" placeholder="e.g. 85">
+                </div>
+                <div class="form-row" style="margin-bottom:0;">
+                    <label>Height (cm)</label>
+                    <input type="number" id="height-input" placeholder="e.g. 178">
+                </div>
+                <div class="form-row" style="margin-bottom:0;">
+                    <label>Age</label>
+                    <input type="number" id="age-input" placeholder="e.g. 24">
+                </div>
+            </div>
+            <button class="btn btn-green" onclick="calculateMetrics()">Calculate & Save Metrics</button>
+
+            <div class="result-box" id="metrics-results">
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
+                    <span style="color:var(--muted); font-size:0.9rem;">BMI</span>
+                    <span style="font-weight:700; color:var(--success);" id="res-bmi">--</span>
+                </div>
+                <div class="calorie-row">
+                    <div class="cal-box cal-maintain"><div class="cal-label">Maintain</div><div class="cal-value" id="res-maintain" style="color:var(--blue);">--</div></div>
+                    <div class="cal-box cal-cut"><div class="cal-label">Cut</div><div class="cal-value" id="res-cut" style="color:var(--red);">--</div></div>
+                    <div class="cal-box cal-bulk"><div class="cal-label">Bulk</div><div class="cal-value" id="res-bulk" style="color:var(--success);">--</div></div>
+                </div>
             </div>
         </div>
 
@@ -322,22 +285,45 @@
         </div>
     </div>
 
+    <!-- AI MEALS TAB -->
     <div id="meals" class="tab-content">
         <div class="page-title">Chef AI</div>
         <div class="card">
             <h3>What's in your fridge?</h3>
-            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">List the ingredients you currently have, and the AI will generate a customized meal recipe along with its macro details.</p>
+            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">Set your preferences and list your ingredients. The AI will generate a customized recipe.</p>
             
+            <div class="two-col" style="margin-bottom: 14px;">
+                <div class="form-row" style="margin-bottom:0;">
+                    <label>Meal Type</label>
+                    <select id="ai-meal-type">
+                        <option>Breakfast</option>
+                        <option selected>Lunch</option>
+                        <option>Dinner</option>
+                        <option>Snack</option>
+                    </select>
+                </div>
+                <div class="form-row" style="margin-bottom:0;">
+                    <label>Dietary Preference</label>
+                    <select id="ai-diet">
+                        <option>Standard (No Restrictions)</option>
+                        <option>Vegetarian</option>
+                        <option>Vegan</option>
+                        <option>Keto</option>
+                        <option>High Protein</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="form-row">
-                <textarea id="ai-ingredients" rows="4" placeholder="e.g. I have 2 chicken breasts, some white rice, half an onion, and soy sauce..."></textarea>
+                <textarea id="ai-ingredients" rows="3" placeholder="e.g. 2 chicken breasts, white rice, half an onion, and soy sauce..."></textarea>
             </div>
             
             <button class="btn btn-blue" id="ai-btn" onclick="generateAIMeal()" style="width: 100%; font-size: 1rem; padding: 12px;">✨ Generate Meal</button>
 
+            <!-- Generated Result -->
             <div class="ai-result-card" id="ai-result">
                 <h4 id="ai-meal-name">Meal Name</h4>
                 <div class="ai-recipe-text" id="ai-meal-prep">Instructions go here.</div>
-                
                 <div class="macro-section-title">Estimated Macros</div>
                 <div class="macro-grid" style="margin-bottom: 0;">
                     <div class="macro-card m-protein"><div class="macro-label">Protein</div><div class="macro-value" id="ai-p">--</div></div>
@@ -351,6 +337,7 @@
         </div>
     </div>
 
+    <!-- DAILY SCHEDULE TAB -->
     <div id="schedule" class="tab-content">
         <div class="page-title">Daily Schedule</div>
         <div class="card">
@@ -359,7 +346,7 @@
                 <label>Task</label>
                 <input type="text" id="task-input" placeholder="e.g. Morning run, Take vitamins...">
             </div>
-            <div class="two-col" style="margin-bottom:14px; gap:12px;">
+            <div class="three-col" style="margin-bottom:14px;">
                 <div class="form-row" style="margin-bottom:0;">
                     <label>Day</label>
                     <select id="task-day">
@@ -370,6 +357,12 @@
                 <div class="form-row" style="margin-bottom:0;">
                     <label>Time</label>
                     <input type="time" id="task-time" value="08:00">
+                </div>
+                <div class="form-row" style="margin-bottom:0;">
+                    <label>Priority</label>
+                    <select id="task-priority">
+                        <option>High</option><option selected>Medium</option><option>Low</option>
+                    </select>
                 </div>
             </div>
             <button class="btn btn-green" onclick="addTask()">+ Add to Schedule</button>
@@ -398,32 +391,27 @@
 
     let currentUser = null;
     let waterAmount = 0;
+    let stepAmount = 0;
     let weightChart = null;
     let tasks = {};
     let activeDay = 'Monday';
 
-    // Smart Toggle Logic for Desktop AND Mobile
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const main = document.getElementById('main');
         const overlay = document.getElementById('overlay');
-
         if (window.innerWidth <= 768) {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
+            sidebar.classList.toggle('open'); overlay.classList.toggle('active');
         } else {
-            sidebar.classList.toggle('closed');
-            main.classList.toggle('expanded');
+            sidebar.classList.toggle('closed'); main.classList.toggle('expanded');
         }
     }
 
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('active');
         } else {
-            document.getElementById('sidebar').classList.remove('closed');
-            document.getElementById('main').classList.remove('expanded');
+            document.getElementById('sidebar').classList.remove('closed'); document.getElementById('main').classList.remove('expanded');
         }
     });
 
@@ -432,56 +420,62 @@
         if (!session) { window.location.href = 'index.html'; return; }
         currentUser = session.user;
         document.getElementById('user-email').textContent = currentUser.email;
+        
+        setupDashboardUI();
         initChart();
         await loadAllData();
         viewDay('Monday', document.querySelector('.day-tab'));
+        updateDashboardAgenda();
         updateStreak();
     };
+
+    function setupDashboardUI() {
+        const hr = new Date().getHours();
+        let greeting = "Good Evening";
+        if (hr < 12) greeting = "Good Morning";
+        else if (hr < 18) greeting = "Good Afternoon";
+        document.getElementById('greeting-text').textContent = greeting + ", Builder";
+        
+        const options = { weekday: 'long', month: 'short', day: 'numeric' };
+        document.getElementById('agenda-date').textContent = new Date().toLocaleDateString('en-US', options);
+        
+        // Load local steps
+        const todayStr = new Date().toISOString().split('T')[0];
+        const savedSteps = localStorage.getItem('a6_steps_' + todayStr);
+        if(savedSteps) stepAmount = parseInt(savedSteps);
+        updateStepsUI();
+    }
 
     function switchTab(id, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
-        
         if (window.innerWidth <= 768) toggleSidebar();
     }
 
     // --- AI MEAL GENERATOR LOGIC ---
     function generateAIMeal() {
         const input = document.getElementById('ai-ingredients').value.toLowerCase();
+        const mealType = document.getElementById('ai-meal-type').value;
+        const diet = document.getElementById('ai-diet').value;
         const btn = document.getElementById('ai-btn');
         const resultBox = document.getElementById('ai-result');
 
-        if(!input) {
-            alert("Please tell the AI what ingredients you have first!");
-            return;
-        }
+        if(!input) { alert("Please tell the AI what ingredients you have first!"); return; }
 
         btn.textContent = "✨ Chef AI is thinking...";
-        btn.disabled = true;
-        resultBox.style.display = "none";
+        btn.disabled = true; resultBox.style.display = "none";
 
         setTimeout(() => {
-            // Smart Fallback
-            let meal = { 
-                name: "🍳 Custom Kitchen Scramble", 
-                prep: "1. Chop your ingredients into bite-sized pieces.\n2. Heat a pan over medium heat with a tiny bit of oil or butter.\n3. Toss in your ingredients, season with salt, pepper, and your favorite spices, and sauté until fully cooked.\n4. Serve hot and enjoy!", 
-                p: "20g", c: "15g", f: "12g", cal: "250" 
-            };
+            let meal = { name: `🍳 ${diet} ${mealType} Scramble`, prep: "1. Chop your ingredients into bite-sized pieces.\n2. Heat a pan over medium heat.\n3. Toss in your ingredients, season well, and sauté until fully cooked.\n4. Serve hot and enjoy!", p: "20g", c: "15g", f: "12g", cal: "250" };
 
-            // Intelligent matching filters
-            if (input.includes('chicken') && (input.includes('rice') || input.includes('broccoli'))) {
-                meal = { name: "🍗 Lean Chicken & Rice Bowl", prep: "1. Season the chicken breast with salt, pepper, and garlic powder.\n2. Sear in a pan on medium-high heat until golden brown and cooked through.\n3. Microwave or boil your rice and steam your veggies.\n4. Slice the chicken, lay it over the rice, and mix in the veggies. Top with soy sauce if you have it!", p: "45g", c: "40g", f: "8g", cal: "412" };
-            } else if (input.includes('egg') || input.includes('eggs')) {
-                meal = { name: "🥚 Protein-Packed Omelette", prep: "1. Crack 3-4 eggs into a bowl and whisk vigorously until slightly bubbly.\n2. Heat a non-stick skillet on medium heat.\n3. Pour the eggs in, let the bottom set, then add any leftover veggies or meats you have to one side.\n4. Fold the eggs over and cook for 1 more minute.", p: "24g", c: "2g", f: "15g", cal: "240" };
-            } else if (input.includes('beef') || input.includes('steak')) {
-                meal = { name: "🥩 Quick Beef Stir-Fry", prep: "1. Slice the beef against the grain into thin strips.\n2. Get a pan screaming hot and add a dash of oil.\n3. Sear the beef quickly (1-2 mins per side).\n4. Toss in any veggies you have along with soy sauce and a pinch of sugar. Serve alone or with carbs.", p: "35g", c: "10g", f: "18g", cal: "350" };
-            } else if (input.includes('pasta') || input.includes('noodles')) {
-                meal = { name: "🍝 Simple Fridge Pasta", prep: "1. Boil salted water and cook the pasta until al dente.\n2. In a separate pan, sauté any veggies or meat you have in olive oil.\n3. Save a little pasta water, drain the pasta, and mix it into the pan with your ingredients.\n4. Let the starch from the water create a light sauce. Top with cheese if available.", p: "12g", c: "65g", f: "10g", cal: "400" };
+            if (input.includes('chicken') && input.includes('rice')) {
+                meal = { name: `🍗 ${diet} Chicken & Rice Bowl`, prep: "1. Season the chicken breast.\n2. Sear in a pan on medium-high heat.\n3. Microwave or boil your rice.\n4. Slice the chicken and lay it over the rice.", p: "45g", c: "40g", f: "8g", cal: "412" };
+            } else if (diet === 'Vegan' || diet === 'Vegetarian') {
+                meal = { name: `🥗 Plant-Powered ${mealType}`, prep: "1. Sauté your veggies with olive oil and spices.\n2. Mix in any grains or beans you listed.\n3. Garnish with seeds or nuts if available.", p: "15g", c: "45g", f: "12g", cal: "320" };
             }
 
-            // Populate visual container components
             document.getElementById('ai-meal-name').textContent = meal.name;
             document.getElementById('ai-meal-prep').textContent = meal.prep;
             document.getElementById('ai-p').textContent = meal.p;
@@ -492,61 +486,61 @@
             btn.innerHTML = "✨ Generate Another Meal";
             btn.disabled = false;
             resultBox.style.display = "block";
-        }, 1500);
+        }, 1200);
     }
 
     async function loadAllData() {
         const today = new Date().toISOString().split('T')[0];
         try {
             const { data: w, error } = await sb.from('water_logs').select('glasses').eq('user_id', currentUser.id).eq('date', today).single();
-            if (error && error.code !== 'PGRST116') throw error; 
             if (w) { waterAmount = w.glasses * 250; updateWaterUI(); }
-        } catch(e) { console.error("Water load error:", e); }
+        } catch(e) {}
         
         try {
             const { data: s, error } = await sb.from('user_stats').select('*').eq('id', currentUser.id).single();
-            if (error && error.code !== 'PGRST116') throw error;
             if (s) {
                 document.getElementById('dash-weight').textContent = (s.weight || '--') + ' kg';
-                document.getElementById('dash-bmi').textContent = s.bmi || '--';
                 document.getElementById('dash-tdee').textContent = s.tdee ? Math.round(s.tdee) + ' kcal' : '--';
                 if (s.weight) document.getElementById('weight-input').value = s.weight;
                 if (s.height) document.getElementById('height-input').value = s.height;
                 if (s.age) document.getElementById('age-input').value = s.age;
             }
-        } catch(e) { console.error("Stats load error:", e); }
+        } catch(e) {}
         
         try {
             const { data: wl, error } = await sb.from('weight_logs').select('weight, date').eq('user_id', currentUser.id).order('date', { ascending: true });
-            if (error) throw error;
             if (wl && wl.length > 0) {
                 weightChart.data.labels = wl.map(l => new Date(l.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
                 weightChart.data.datasets[0].data = wl.map(l => parseFloat(l.weight));
                 weightChart.update();
                 document.getElementById('dash-weight').textContent = wl[wl.length-1].weight + ' kg';
             }
-        } catch(e) { console.error("Weight chart load error:", e); }
+        } catch(e) {}
         
         try {
             const { data: td, error } = await sb.from('workout_logs').select('*').eq('user_id', currentUser.id);
-            if (error) throw error;
             if (td) {
                 tasks = {};
                 td.forEach(t => {
                     const day = t.muscle_group;
                     if (!tasks[day]) tasks[day] = [];
-                    tasks[day].push({ id: t.id, text: t.exercise, time: t.task_time || '00:00' });
+                    // Extract priority if we embedded it in the text string previously (e.g. "[High] Task Name")
+                    let prio = "Medium";
+                    let text = t.exercise;
+                    if(text.startsWith("[High] ")) { prio = "High"; text = text.replace("[High] ", ""); }
+                    if(text.startsWith("[Medium] ")) { prio = "Medium"; text = text.replace("[Medium] ", ""); }
+                    if(text.startsWith("[Low] ")) { prio = "Low"; text = text.replace("[Low] ", ""); }
+
+                    tasks[day].push({ id: t.id, text: text, time: t.task_time || '00:00', priority: prio });
                 });
             }
-        } catch(e) { console.error("Tasks load error:", e); }
+        } catch(e) {}
     }
 
     async function updateStreak() {
         const today = new Date().toISOString().split('T')[0];
         try {
-            const { data: sd, error } = await sb.from('streaks').select('*').eq('id', currentUser.id).single();
-            if (error && error.code !== 'PGRST116') throw error;
-            
+            const { data: sd } = await sb.from('streaks').select('*').eq('id', currentUser.id).single();
             let streak = 1;
             if (sd) {
                 const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
@@ -559,14 +553,13 @@
                 await sb.from('streaks').insert({ id: currentUser.id, current_streak: 1, last_login: today });
             }
             document.getElementById('streak-display').textContent = '🔥 ' + streak + ' Day Streak';
-        } catch(e) { console.error("Streak error:", e); }
+        } catch(e) {}
     }
 
     function updateWaterUI() {
         const pct = Math.min((waterAmount / 3000) * 100, 100);
         document.getElementById('water-display').textContent = waterAmount + ' ml';
         document.getElementById('water-bar').style.width = pct + '%';
-        document.getElementById('water-percent').textContent = Math.round(pct) + '% of daily goal';
         document.getElementById('dash-water').textContent = waterAmount + ' ml';
         document.getElementById('dash-water-bar').style.width = pct + '%';
     }
@@ -576,142 +569,99 @@
         updateWaterUI();
         const today = new Date().toISOString().split('T')[0];
         const glasses = Math.round(waterAmount / 250);
-        try { 
-            const { error } = await sb.from('water_logs').upsert({ user_id: currentUser.id, date: today, glasses }, { onConflict: 'user_id,date' }); 
-            if(error) throw error;
-        } catch(e) { console.error("Water update error:", e); }
+        try { await sb.from('water_logs').upsert({ user_id: currentUser.id, date: today, glasses }, { onConflict: 'user_id,date' }); } catch(e) {}
     }
 
-    function getMacros(calories, weight) {
-        const protein = Math.round(weight * 2);
-        const fats = Math.round((calories * 0.25) / 9);
-        const carbs = Math.round((calories - (protein * 4) - (fats * 9)) / 4);
-        const fiber = Math.round((calories / 1000) * 14);
-        return { protein, fats, carbs, fiber };
+    function updateStepsUI() {
+        const pct = Math.min((stepAmount / 10000) * 100, 100);
+        document.getElementById('steps-display').textContent = stepAmount;
+        document.getElementById('steps-bar').style.width = pct + '%';
+        document.getElementById('dash-steps').textContent = stepAmount;
+        document.getElementById('dash-steps-bar').style.width = pct + '%';
+    }
+
+    function updateSteps(amount) {
+        stepAmount = Math.max(0, stepAmount + amount);
+        updateStepsUI();
+        const todayStr = new Date().toISOString().split('T')[0];
+        localStorage.setItem('a6_steps_' + todayStr, stepAmount); // Save locally for now
     }
 
     function calculateMetrics() {
         const weight = parseFloat(document.getElementById('weight-input').value);
         const heightCm = parseFloat(document.getElementById('height-input').value);
         const age = parseFloat(document.getElementById('age-input').value);
-        if (!weight || !heightCm || !age) { alert('Please fill in all fields.'); return; }
+        if (!weight || !heightCm || !age) return;
 
         const h = heightCm / 100;
         const bmi = (weight / (h * h)).toFixed(1);
-        const bmiStatus = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese';
         const bmr = (10 * weight) + (6.25 * heightCm) - (5 * age) + 5;
         const tdee = Math.round(bmr * 1.55);
-        const cut = tdee - 500;
-        const bulk = tdee + 300;
-
-        const mm = getMacros(tdee, weight);
-        const cm = getMacros(cut, weight);
-        const bm = getMacros(bulk, weight);
 
         document.getElementById('res-bmi').textContent = bmi;
-        document.getElementById('res-bmi-status').textContent = bmiStatus;
         document.getElementById('res-maintain').textContent = tdee + ' kcal';
-        document.getElementById('res-cut').textContent = cut + ' kcal';
-        document.getElementById('res-bulk').textContent = bulk + ' kcal';
-
-        document.getElementById('m-protein').textContent = mm.protein + 'g';
-        document.getElementById('m-carbs').textContent = mm.carbs + 'g';
-        document.getElementById('m-fats').textContent = mm.fats + 'g';
-        document.getElementById('m-fiber').textContent = mm.fiber + 'g';
-
-        document.getElementById('c-protein').textContent = cm.protein + 'g';
-        document.getElementById('c-carbs').textContent = cm.carbs + 'g';
-        document.getElementById('c-fats').textContent = cm.fats + 'g';
-        document.getElementById('c-fiber').textContent = cm.fiber + 'g';
-
-        document.getElementById('b-protein').textContent = bm.protein + 'g';
-        document.getElementById('b-carbs').textContent = bm.carbs + 'g';
-        document.getElementById('b-fats').textContent = bm.fats + 'g';
-        document.getElementById('b-fiber').textContent = bm.fiber + 'g';
+        document.getElementById('res-cut').textContent = (tdee - 500) + ' kcal';
+        document.getElementById('res-bulk').textContent = (tdee + 300) + ' kcal';
 
         document.getElementById('metrics-results').style.display = 'block';
-        document.getElementById('dash-bmi').textContent = bmi;
         document.getElementById('dash-tdee').textContent = tdee + ' kcal';
         document.getElementById('dash-weight').textContent = weight + ' kg';
 
-        try { 
-            sb.from('user_stats').upsert({ id: currentUser.id, weight, height: heightCm, age, bmi: parseFloat(bmi), tdee }, { onConflict: 'id' }).then(({error}) => {
-                if(error) console.error("Stats save error:", error);
-            }); 
-        } catch(e) { console.error("Stats save error:", e); }
+        try { sb.from('user_stats').upsert({ id: currentUser.id, weight, height: heightCm, age, bmi: parseFloat(bmi), tdee }, { onConflict: 'id' }); } catch(e) {}
     }
 
     function initChart() {
         const ctx = document.getElementById('weightChart').getContext('2d');
         weightChart = new Chart(ctx, {
             type: 'line',
-            data: { labels: [], datasets: [{ label: 'Weight (kg)', data: [], borderColor: '#2e7d5e', backgroundColor: 'rgba(46,125,94,0.1)', tension: 0.3, fill: true, pointBackgroundColor: '#2e7d5e', pointRadius: 5 }] },
+            data: { labels: [], datasets: [{ label: 'Weight (kg)', data: [], borderColor: '#2e7d5e', backgroundColor: 'rgba(46,125,94,0.1)', tension: 0.3, fill: true, pointBackgroundColor: '#2e7d5e' }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#64748b' }, grid: { color: '#1a1d24' } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1a1d24' } } } }
         });
     }
 
     async function addWeightLog() {
         const val = parseFloat(document.getElementById('log-weight-val').value);
-        if (!val) { alert('Enter a weight value.'); return; }
+        if (!val) return;
         const today = new Date().toISOString().split('T')[0];
         try {
-            const { error: insertError } = await sb.from('weight_logs').insert({ user_id: currentUser.id, date: today, weight: val });
-            if (insertError) throw insertError;
-            
+            await sb.from('weight_logs').insert({ user_id: currentUser.id, date: today, weight: val });
             document.getElementById('log-weight-val').value = '';
-            
-            const { data: wl, error: selectError } = await sb.from('weight_logs').select('weight, date').eq('user_id', currentUser.id).order('date', { ascending: true });
-            if (selectError) throw selectError;
-            
-            if (wl) {
-                weightChart.data.labels = wl.map(l => new Date(l.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-                weightChart.data.datasets[0].data = wl.map(l => parseFloat(l.weight));
-                weightChart.update();
-                document.getElementById('dash-weight').textContent = val + ' kg';
-            }
-        } catch(e) { 
-            console.error(e);
-            alert('Error saving weight: ' + e.message); 
-        }
+            loadAllData(); // Reload chart
+        } catch(e) {}
     }
 
     async function addTask() {
         const text = document.getElementById('task-input').value.trim();
         const day = document.getElementById('task-day').value;
         const time = document.getElementById('task-time').value;
-        if (!text) { alert('Please enter a task.'); return; }
+        const prio = document.getElementById('task-priority').value;
+        if (!text) return;
+        
+        // Append priority to string to avoid needing a new DB column right now
+        const dbString = `[${prio}] ${text}`;
+
         try {
-            const { data, error } = await sb.from('workout_logs').insert({
-                user_id: currentUser.id,
-                muscle_group: day,
-                exercise: text,
-                task_time: time,
-                date: new Date().toISOString().split('T')[0]
+            const { data } = await sb.from('workout_logs').insert({
+                user_id: currentUser.id, muscle_group: day, exercise: dbString, task_time: time, date: new Date().toISOString().split('T')[0]
             }).select().single();
             
-            if (error) throw error;
-            
             if (!tasks[day]) tasks[day] = [];
-            tasks[day].push({ id: data.id, text, time });
+            tasks[day].push({ id: data.id, text: text, time, priority: prio });
             document.getElementById('task-input').value = '';
-            viewDay(day, document.querySelectorAll('.day-tab')[['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].indexOf(day)]);
-        } catch(e) { 
-            console.error(e);
-            alert('Error saving task: ' + e.message); 
-        }
+            viewDay(day, document.querySelector('.day-tab.active'));
+            updateDashboardAgenda();
+        } catch(e) {}
     }
 
     async function deleteTask(id, day) {
         try {
-            const { error } = await sb.from('workout_logs').delete().eq('id', id);
-            if(error) throw error;
-            
+            await sb.from('workout_logs').delete().eq('id', id);
             tasks[day] = tasks[day].filter(t => t.id !== id);
             viewDay(day, document.querySelector('.day-tab.active'));
-        } catch(e) { console.error("Error deleting task:", e); }
+            updateDashboardAgenda();
+        } catch(e) {}
     }
 
-    // Displays current schedules
     function viewDay(day, btn) {
         activeDay = day;
         document.querySelectorAll('.day-tab').forEach(b => b.classList.remove('active'));
@@ -724,17 +674,42 @@
             return;
         }
         
-        let html = '<div class="table-responsive"><table class="schedule-table"><thead><tr><th style="width:110px;">Time</th><th>Task</th><th style="width:50px;"></th></tr></thead><tbody>';
+        let html = '<table class="schedule-table"><thead><tr><th style="width:110px;">Time</th><th>Task</th><th style="width:50px;"></th></tr></thead><tbody>';
         dayTasks.forEach(t => {
-            const [h, m] = t.time.split(':');
-            const hr = parseInt(h);
-            const ampm = hr >= 12 ? 'PM' : 'AM';
-            const dh = hr % 12 || 12;
-            const timeStr = (dh < 10 ? '0'+dh : dh) + ':' + m + ' ' + ampm;
-            html += `<tr><td style="color:var(--blue); font-weight:600;">${timeStr}</td><td>${t.text}</td><td><button class="delete-btn" onclick="deleteTask('${t.id}', '${day}')">✕</button></td></tr>`;
+            const timeStr = formatTime(t.time);
+            html += `<tr><td style="color:var(--blue); font-weight:600;">${timeStr}</td><td><span class="priority-dot prio-${t.priority}"></span>${t.text}</td><td><button class="delete-btn" onclick="deleteTask('${t.id}', '${day}')">✕</button></td></tr>`;
         });
-        html += '</tbody></table></div>';
+        html += '</tbody></table>';
         container.innerHTML = html;
+    }
+
+    function updateDashboardAgenda() {
+        const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        const todayName = days[new Date().getDay()];
+        const todayTasks = (tasks[todayName] || []).slice().sort((a, b) => a.time.localeCompare(b.time));
+        
+        const list = document.getElementById('dashboard-agenda');
+        if(todayTasks.length === 0) {
+            list.innerHTML = '<li style="color:var(--muted); font-size: 0.9rem;">No tasks scheduled for today.</li>';
+            return;
+        }
+
+        let html = '';
+        todayTasks.forEach(t => {
+            html += `<li class="agenda-item">
+                        <div><span class="priority-dot prio-${t.priority}"></span> ${t.text}</div>
+                        <div class="agenda-time">${formatTime(t.time)}</div>
+                     </li>`;
+        });
+        list.innerHTML = html;
+    }
+
+    function formatTime(time24) {
+        const [h, m] = time24.split(':');
+        const hr = parseInt(h);
+        const ampm = hr >= 12 ? 'PM' : 'AM';
+        const dh = hr % 12 || 12;
+        return (dh < 10 ? '0'+dh : dh) + ':' + m + ' ' + ampm;
     }
 
     async function logout() {
